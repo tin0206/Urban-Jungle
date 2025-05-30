@@ -4,8 +4,8 @@ import { Plant } from "@/app/model"
 import { useEffect, useState } from "react"
 import { FaShoppingBag } from "react-icons/fa"
 
-export default function TrendingProducts() {
-    const [trendingPlants, setTrendingPlants] = useState<Plant[]>([])
+export default function NewProducts() {
+    const [newPlants, setNewPlants] = useState<Plant[]>([])
     const [displayCart, setDisplayCart] = useState<number | null>(null)
     const [displayInstruction, setDisplayInstruction] = useState<number | null>(null)
 
@@ -13,23 +13,22 @@ export default function TrendingProducts() {
         fetch("http://localhost:8000/api/plants")
         .then((response) => response.json())
         .then((data) => {
-            setTrendingPlants(data)
-            console.log("Trending plants fetched:", data)
+            setNewPlants(data)
         })
         .catch((error) => {
-            console.error("Error fetching trending plants:", error)
+            console.error("Error fetching new plants:", error)
         })
     }, [])
 
     return (
     <div className="w-full px-2 md:px-8 lg:px-10">
-        <div className="pt-[64px] pb-[20px] md:pt-[80px] md:pb-[40px] lg:pt-[100px] lg:pb-[60px] flex flex-col items-center justify-center">
-            <h1 className="text-center font-medium text-[42px]">Trending Products</h1>
-            <ul className="max-w-[1200px] flex flex-wrap mt-12">
-                {trendingPlants.map((plant, id) => (
-                    <li key={id} className="w-1/2 md:w-1/3 mb-2 h-[298px] md:h-[338px] lg:h-[442px] xl:h-[534px] px-2.5">
+        <div className="pt-[64px] pb-[20px] md:pt-[80px] md:pb-[40px] lg:pt-[100px] lg:pb-[60px] flex flex-col items-center">
+            <h1 className="text-center font-medium text-[32.832px] lg:text-[42px] text-[rgb(34,34,34)]">New Products</h1>
+            <ul className="max-w-[1200px] grid grid-cols-2 md:grid-cols-3 mt-10">
+                {newPlants.map((plant, id) => (
+                    <li key={id} className="mb-2 h-[298px] md:h-[338px] lg:h-[442px] xl:h-[534px] px-2.5">
                         <div
-                            className={`relative cursor-pointer w-[226px] h-[226px] sm:w-[300px] sm:h-[250px] md:w-[225px] md:h-[233px] lg:w-[301px] lg:h-[327px] xl:w-[381px] xl:h-[414px]`}
+                            className={`relative cursor-pointer w-full h-[226px] sm:h-[250px] md:h-[233px] lg:h-[327px] xl:h-[414px]`}
                             onMouseOver={() => setDisplayCart(id)}
                             onMouseOut={() => setDisplayCart(null)}
                         >

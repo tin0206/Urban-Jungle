@@ -18,9 +18,9 @@ export default function Categories() {
 
   return (
     <div className="w-full px-6 md:px-8 lg:px-10">
-        <div className="w-full py-16 md:py-20 flex flex-col gap-y-[60px] text-center">
+        <div className="w-full py-16 md:py-20 flex flex-col gap-y-[60px] text-center items-center">
           <h1 className="text-[32px] font-medium">Our Categories</h1>
-          <ul className="w-full grid grid-cols-1 md:grid-cols-4 gap-5">
+          <ul className="max-w-[1200px] grid grid-cols-1 md:grid-cols-4 gap-5">
             {categories.map((category, id) => (
               <li key={id} className="w-full">
                 <div>
@@ -28,7 +28,7 @@ export default function Categories() {
                     src="./default.jpg" alt=""
                   />
                 </div>
-                <h2 className="text-[21px] w-full text-gray-800">
+                <h2 className="text-[21px] w-full text-gray-800 mt-2">
                   {category.name}
                 </h2>
               </li>
