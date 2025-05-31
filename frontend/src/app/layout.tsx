@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Inter, Instrument_Sans } from "next/font/google";
 import "./globals.css";
 import { NavBar } from "@/components/NavBar";
+import BotNavBar from "@/components/BotNavBar";
+import { ClientLayout } from "@/components/ClientLayout";
+import ReadyToFind from "@/components/ReadyToFind";
 
 const interFont = Inter({
   variable: "--font-inter",
@@ -28,14 +31,14 @@ export default function RootLayout({
       <body
         className={`${interFont.variable} ${instrumentSans.variable} antialiased`}
       >
-        <div
-          className={`font-main bg-[url(/background.jpg)] w-full h-[600px] lg:h-[912px] transition-transform bg-cover`}
-        >
+        <ClientLayout>
           <NavBar />
           <div>
             {children}
           </div>
-        </div>
+          <ReadyToFind />
+          <BotNavBar />
+        </ClientLayout>
       </body>
     </html>
   );
