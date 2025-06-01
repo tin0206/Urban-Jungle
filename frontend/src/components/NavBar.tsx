@@ -39,11 +39,18 @@ export const NavBar = () => {
         <div className="w-full h-[70px] md:h-20">
             <div className="px-5 flex items-center md:justify-center justify-between h-full 2xl:mx-[332.500px]">
                 <div className="h-full flex items-center">
-                    <div className="pr-4 cursor-pointer">
-                        <img className="w-[120px] md:w-[200px] h-[41px]" src={`${showMainMenu ? 
-                            "https://websitedemos.net/generic-ecommerce-02/wp-content/uploads/sites/1526/2025/03/header-logo.svg" : 
-                            "https://websitedemos.net/generic-ecommerce-02/wp-content/uploads/sites/1526/2025/03/normal-header.svg"
-                        }`} alt="" />
+                    <div className="pr-4 cursor-pointer"
+                        onClick={() => {
+                            router.push("/")
+                        }}
+                    >
+                        <img 
+                            className="w-[120px] md:w-[200px] h-[41px]" src={`${showMainMenu ? 
+                                "https://websitedemos.net/generic-ecommerce-02/wp-content/uploads/sites/1526/2025/03/header-logo.svg" : 
+                                "https://websitedemos.net/generic-ecommerce-02/wp-content/uploads/sites/1526/2025/03/normal-header.svg"
+                            }`} 
+                            alt="" 
+                        />
                     </div>
                 </div>
                 <div className="hidden md:flex items-center h-full ml-auto lg:translate-x-[-32px]">
