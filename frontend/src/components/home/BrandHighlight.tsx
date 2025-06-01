@@ -1,6 +1,6 @@
 export default function BrandHighlight() {
   return (
-    <div className="w-full flex xl:justify-center px-6 md:px-8 lg:px-10 bg-[rgb(236,244,211)] h-[1069px] md:h-[580px] lg:h-[735px]">
+    <div className="w-full flex justify-center px-6 md:px-8 lg:px-10 bg-[rgb(236,244,211)]">
       <div className="max-w-[1200px] py-16 md:py-20 md:gap-x-[40px] lg:gap-x-[110px] grid grid-cols-1 md:grid-cols-2 gap-y-[45px] md:gap-y-0">
         <div className="w-full aspect-[4/3] md:aspect-[1]">
           <div className="bg-[url('/stats_count.jpg')] bg-cover bg-center w-full h-full" />

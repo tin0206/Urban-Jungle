@@ -14,7 +14,7 @@ export const NavBar = () => {
     const router = useRouter()
 
     useEffect(() => {
-        if (path === "/") {
+        if (path === "/" || path === "/about" || path === "/contact") {
             setShowMainMenu(true)
         }
         else {
