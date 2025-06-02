@@ -6,10 +6,13 @@ import { RxHamburgerMenu } from "react-icons/rx"
 import { Button } from "./ui/button"
 import { useEffect, useState } from "react"
 import { usePathname, useRouter } from "next/navigation"
+import useMobileMenu from "@/stores/useMobileMenu"
+import useShoppingCart from "@/stores/useShoppingCart"
 
 export const NavBar = () => {
-    const [showMobileMenu, setShowMobileMenu] = useState(false)
+    const { showMobileMenu, setShowMobileMenu } = useMobileMenu()
     const [showMainMenu, setShowMainMenu] = useState(false)
+    const { setShowShoppingCart } = useShoppingCart()
     const path = usePathname()
     const router = useRouter()
 
@@ -25,7 +28,10 @@ export const NavBar = () => {
     useEffect(() => {
         const handleResize = () => {
             if (window.innerWidth >= 768) {
-            setShowMobileMenu(false)
+                setShowMobileMenu(false)
+            }
+            else {
+                setShowShoppingCart(false)
             }
         }
 
@@ -98,8 +104,13 @@ export const NavBar = () => {
                             </li>
                         </ul>
                     </div>
-                    <div className="cursor-pointer flex items-center pl-2.5">
-                        <FaShoppingBag className={`${showMainMenu ? "text-white" : ""} size-5`} />
+                    <div 
+                        className="cursor-pointer flex items-center pl-2.5"
+                        onClick={() => {
+                            setShowShoppingCart(true)
+                        }}
+                    >
+                        <FaShoppingBag className={`${showMainMenu ? "text-white" : "text-[rgb(136,173,53)]"} size-5`} />
                     </div>
                 </div>
                 <div className="flex md:hidden">

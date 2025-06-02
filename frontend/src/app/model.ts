@@ -11,3 +11,10 @@ export type Plant = {
     imageUrl: string;
     description: string;
 }
+
+export type CartItem = {
+    id: number;
+    plant_id: number;
+    quantity: number;
+    plant: Plant;
+}

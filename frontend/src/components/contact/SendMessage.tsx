@@ -76,7 +76,7 @@ export default function SendMessage() {
               <div className="font-navbar text-[14px] leading-[20px] font-bold">
                 Message
               </div>
-              <input type="text" className="border-1 h-[120px] px-4 py-3 w-11/12" />
+              <textarea className="border-1 h-[120px] px-4 py-3 w-11/12" />
             </div>
             <Button 
               className="font-navbar rounded-3xl py-[14px] px-[28px] w-[104.703px] h-[42.5938px] text-[16px] cursor-pointer bg-[rgb(136,173,53)] hover:bg-[#698927] transition duration-300"

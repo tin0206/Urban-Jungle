@@ -31,7 +31,7 @@ class PlantController extends Controller
             return [
                 'id' => $plant->id,
                 'name' => $plant->name,
-                'category_name' => $plant->category?->name,
+                'category_name' => $plant->category->name,
                 'description' => $plant->description,
                 'price' => $plant->price,
             ];

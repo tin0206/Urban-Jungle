@@ -2,12 +2,11 @@
 
 import { Plant } from "@/app/model"
 import { useEffect, useState } from "react"
-import { FaShoppingBag } from "react-icons/fa"
+import AddToCart from "../AddToCart"
 
 export default function PopularProducts() {
     const [popularPlants, setPopularPlants] = useState<Plant[]>([])
     const [displayCart, setDisplayCart] = useState<number | null>(null)
-    const [displayInstruction, setDisplayInstruction] = useState<number | null>(null)
 
     useEffect(() => {
         fetch("http://localhost:8000/api/plants")
@@ -36,20 +35,7 @@ export default function PopularProducts() {
                                     src="./default.jpg" alt=""
                                     className="w-full h-full"
                                 />
-                                <div className={`flex items-center justify-center absolute top-4 right-4 border-2 border-transparent bg-white rounded-full size-7
-                                    ${displayCart === id ? "" : "hidden"}`}>
-                                    <FaShoppingBag 
-                                        className={`size-4 text-gray-500
-                                        ${displayInstruction === id ? "text-gray-800" : ""}`}
-                                        onMouseOver ={() => setDisplayInstruction(id)}
-                                        onMouseOut={() => setDisplayInstruction(null)}
-                                    />
-                                </div>
-                                <div className={`absolute flex items-center top-3 right-12
-                                    ${displayInstruction === id ? "" : "hidden"}`}>
-                                    <div className="text-white text-[10px] bg-black p-2 rounded-[5px]">Add to cart</div>
-                                    <div className="border-l-[5px] border-t-[5px] border-b-[5px] border-l-black"></div>
-                                </div>
+                                <AddToCart displayCart={displayCart} id={id} plantId={plant.id} />
                             </div>
                             <div className="mt-2">
                                 <h2 className="text-[16px] font-medium cursor-pointer">{plant.name}</h2>

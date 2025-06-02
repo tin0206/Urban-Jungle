@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ShoppingCartController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -24,3 +25,8 @@ Route::get('/categories', [CategoryController::class, 'apiIndex']);
 
 // API route for plants
 Route::get('/plants', [\App\Http\Controllers\PlantController::class, 'apiIndex']);
+
+// API route for shopping carts
+Route::get('/shopping_cart/items', [ShoppingCartController::class, 'apiIndex']);
+
+Route::post('/shopping_cart/add', [ShoppingCartController::class, 'store']);

@@ -13,4 +13,8 @@ class Plant extends Model
     {
         return $this->belongsTo(Category::class);
     }
+
+    public function shoppingCarts() {
+        return $this->hasMany(ShoppingCart::class);
+    }
 }
