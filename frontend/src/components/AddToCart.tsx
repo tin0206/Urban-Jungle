@@ -1,5 +1,6 @@
 "use client"
 
+import { useCartStore } from "@/stores/useCartStore"
 import { useState } from "react"
 import { FaShoppingBag } from "react-icons/fa"
 
@@ -12,17 +13,19 @@ interface AddToCartProps {
 export default function AddToCart( { displayCart, id, plantId }: AddToCartProps) {
   const [displayInstruction, setDisplayInstruction] = useState<number | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+  const { increment } = useCartStore()
 
   async function addToCart(plantId: number) {
     setIsLoading(true)
     try {
-      await fetch("http://localhost:8000/api/shopping_cart/add", {
+      await fetch("http://localhost:8000/api/shopping_cart/addItem", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ plant_id: plantId }),
       })
+      increment()
     } catch (error) {
       console.error("Error adding to cart:", error)
     }

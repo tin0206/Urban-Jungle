@@ -15,6 +15,7 @@ export type Plant = {
 export type CartItem = {
     id: number;
     plant_id: number;
+    plant_name: string;
     quantity: number;
-    plant: Plant;
+    price: number;
 }

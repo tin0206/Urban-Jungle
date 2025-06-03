@@ -7,7 +7,7 @@ export default function TopBarShoppingCart() {
   const { setShowShoppingCart } = useShoppingCart()
 
   return (
-    <div className="flex items-center p-[21.440px] border-b-[1px] justify-between w-full max-h-14">
+    <div className="flex items-center p-[21.440px] border-b justify-between w-full max-h-14">
       <div className="font-navbar text-[rgb(69,69,69)] text-[16px]">
         Shopping Cart
       </div>

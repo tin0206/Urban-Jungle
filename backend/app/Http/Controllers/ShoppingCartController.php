@@ -108,4 +108,22 @@ class ShoppingCartController extends Controller
     {
         //
     }
+
+    /**
+     * Remove an item from the shopping cart.
+     */
+    public function removeItem(Request $request)
+    {
+        //
+        $validated = $request->validate([
+            'item_id' => 'required|integer|exists:shopping_carts,id',
+        ]);
+
+        $item = ShoppingCart::find($validated['item_id']);
+        if (!$item) {
+            return response()->json(['message' => 'Item not found in the shopping cart.'], 404);
+        }
+        $item->delete();
+        return response()->json(['message' => 'Item removed from the shopping cart successfully.'], 200);
+    }
 }

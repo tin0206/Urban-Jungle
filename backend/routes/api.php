@@ -29,4 +29,6 @@ Route::get('/plants', [\App\Http\Controllers\PlantController::class, 'apiIndex']
 // API route for shopping carts
 Route::get('/shopping_cart/items', [ShoppingCartController::class, 'apiIndex']);
 
-Route::post('/shopping_cart/add', [ShoppingCartController::class, 'store']);
+Route::post('/shopping_cart/addItem', [ShoppingCartController::class, 'store']);
+
+Route::post('/shopping_cart/removeItem', [ShoppingCartController::class, 'removeItem']);
