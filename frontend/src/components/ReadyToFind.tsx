@@ -1,10 +1,9 @@
 "use client"
 
-import { useRouter } from "next/navigation"
 import { Button } from "./ui/button"
+import Link from "next/link"
 
 export default function ReadyToFind() {
-  const router = useRouter()
 
   return (
     <div className="w-full px-6 md:px-8 lg:px-10 bg-[url('/ready_to_find.jpg')] bg-cover bg-center">
@@ -18,12 +17,13 @@ export default function ReadyToFind() {
             </p>
         </div>
         <div className="h-[56px] flex items-end">
+          <Link href="/shop">
             <Button 
               className="font-navbar rounded-3xl w-[135px] h-[46px] text-[16px] cursor-pointer bg-[rgb(136,173,53)] hover:bg-[#698927] transition duration-300"
-              onClick={() => router.push("/shop")}
             >
             	Shop Now
             </Button>
+          </Link>
         </div>
       </div>
     </div>

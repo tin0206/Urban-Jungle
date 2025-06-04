@@ -2,10 +2,9 @@
 
 import { useState } from "react"
 import { Button } from "../ui/button"
-import { useRouter } from "next/navigation"
+import Link from "next/link"
 
 export default function FlashSale() {
-    const router = useRouter()
     const [hoverShopNow, setHoverShopNow] = useState(false)
 
     return (
@@ -19,18 +18,19 @@ export default function FlashSale() {
                         Don't miss out on our flash sale event! For a limited time, enjoy up to 50% off on a selection of our best-selling products.
                     </p>
                     <div className="h-[49px] mt-2">
-                        <Button 
-                            variant="ghost"
-                            className={`w-[137px] h-[48px] px-6 py-3 rounded-3xl transition-colors duration-200 cursor-pointer
-                                ${hoverShopNow ? "bg-white text-black" : "bg-transparent border-1"}`}
-                            onMouseOver={() => setHoverShopNow(true)}
-                            onMouseOut={() => setHoverShopNow(false)}
-                            onClick={() => router.push("/shop")}
-                        >
-                            <span className="font-navbar text-[16px] font-medium">
-                                Shop Now
-                            </span>
-                        </Button>
+                        <Link href={"/shop"}>
+                            <Button 
+                                variant="ghost"
+                                className={`w-[137px] h-[48px] px-6 py-3 rounded-3xl transition-colors duration-200 cursor-pointer
+                                    ${hoverShopNow ? "bg-white text-black" : "bg-transparent border-1"}`}
+                                onMouseOver={() => setHoverShopNow(true)}
+                                onMouseOut={() => setHoverShopNow(false)}
+                            >
+                                <span className="font-navbar text-[16px] font-medium">
+                                    Shop Now
+                                </span>
+                            </Button>
+                        </Link>
                     </div>
                 </div>
             </div>

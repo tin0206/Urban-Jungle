@@ -23,21 +23,64 @@ class PlantController extends Controller
     /**
      * Display a listing of the resource for API.
      */
-    public function apiIndex()
+    public function apiIndex(Request $request, $plant_name = null)
     {
         //
-        $plants = Plant::with('category')->get();
-        $plants = $plants->map(function ($plant) {
+        $query = Plant::with('category');
+
+        if ($plant_name) {
+            $plantName = str_replace('-', ' ', $plant_name);
+            $plant = $query->whereRaw('LOWER(name) = ?', [$plantName])->first();
+            if ($plant) {
+                return response()->json([
+                'id' => $plant->id,
+                'name' => $plant->name,
+                'category_name' => $plant->category->name,
+                'description' => $plant->description,
+                'price' => $plant->price
+                ]);
+            }
+            return response()->json(['error' => 'Plant not found'], 404);
+        }
+
+        $plants = $query->get()->map(function ($plant) {
             return [
                 'id' => $plant->id,
                 'name' => $plant->name,
                 'category_name' => $plant->category->name,
                 'description' => $plant->description,
-                'price' => $plant->price,
+                'price' => $plant->price
             ];
         });
 
         return response()->json($plants);
+    }
+
+    /**
+     * Display a listing of related plants for API.
+     */
+    public function apiRelated(Request $request, $plant_name)
+    {
+        $plantName = str_replace('-', ' ', $plant_name);
+        $plant = Plant::whereRaw('LOWER(name) = ?', [$plantName])->first();
+        if ($plant) {
+            $relatedPlants = Plant::where('category_id', $plant->category_id)
+                ->where('id', '!=', $plant->id)
+                ->inRandomOrder()
+                ->limit(4)
+                ->get()
+                ->map(function ($relatedPlant) {
+                    return [
+                        'id' => $relatedPlant->id,
+                        'name' => $relatedPlant->name,
+                        'category_name' => $relatedPlant->category->name,
+                        'description' => $relatedPlant->description,
+                        'price' => $relatedPlant->price
+                    ];
+                });
+            return response()->json($relatedPlants);
+        }
+        return response()->json(['error' => 'Plant not found'], 404);
     }
 
     /**

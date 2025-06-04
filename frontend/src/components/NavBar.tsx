@@ -5,16 +5,16 @@ import { FaXTwitter } from "react-icons/fa6"
 import { RxHamburgerMenu } from "react-icons/rx"
 import { Button } from "./ui/button"
 import { useEffect, useState } from "react"
-import { usePathname, useRouter } from "next/navigation"
+import { usePathname } from "next/navigation"
 import useMobileMenu from "@/stores/useMobileMenu"
 import useShoppingCart from "@/stores/useShoppingCart"
+import Link from 'next/link'
 
 export const NavBar = () => {
     const { showMobileMenu, setShowMobileMenu } = useMobileMenu()
     const [showMainMenu, setShowMainMenu] = useState(false)
     const { setShowShoppingCart } = useShoppingCart()
     const path = usePathname()
-    const router = useRouter()
 
     useEffect(() => {
         if (path === "/" || path === "/about" || path === "/contact") {
@@ -45,10 +45,8 @@ export const NavBar = () => {
         <div className="w-full h-[70px] md:h-20">
             <div className="px-5 flex items-center md:justify-center justify-between h-full 2xl:mx-[332.500px]">
                 <div className="h-full flex items-center">
-                    <div className="pr-4 cursor-pointer"
-                        onClick={() => {
-                            router.push("/")
-                        }}
+                    <Link className="pr-4 cursor-pointer"
+                        href="/"
                     >
                         <img 
                             className="w-[120px] md:w-[200px] h-[41px]" src={`${showMainMenu ? 
@@ -57,35 +55,35 @@ export const NavBar = () => {
                             }`} 
                             alt="" 
                         />
-                    </div>
+                    </Link>
                 </div>
                 <div className="hidden md:flex items-center h-full ml-auto lg:translate-x-[-32px]">
                     <div className="pr-2.5">
                         <ul className="flex font-navbar">
-                            <li 
+                            <Link
                                 className={`cursor-pointer ${showMainMenu ? "text-white" : ""} px-4 text-[16px] ${path === "/" ? "text-[#698927]" : ""} hover:text-[#698927]`}
-                                onClick={() => router.push("/")}
+                                href="/"
                             >
                                 Home
-                            </li>
-                            <li 
+                            </Link>
+                            <Link 
                                 className={`cursor-pointer ${showMainMenu ? "text-white" : ""} px-4 text-[16px] ${path === "/shop" ? "text-[#698927]" : ""} hover:text-[#698927]`}
-                                onClick={() => router.push("/shop")}
+                                href={"/shop"}
                             >
                                 Shop
-                            </li>
-                            <li 
+                            </Link>
+                            <Link 
                                 className={`cursor-pointer ${showMainMenu ? "text-white" : ""} px-4 text-[16px] ${path === "/about" ? "text-[#698927]" : ""} hover:text-[#698927]`}
-                                onClick={() => router.push("/about")}
+                                href={"/about"}
                             >
                                 About
-                            </li>
-                            <li 
+                            </Link>
+                            <Link 
                                 className={`cursor-pointer ${showMainMenu ? "text-white" : ""} px-4 text-[16px] ${path === "/contact" ? "text-[#698927]" : ""} hover:text-[#698927]`}
-                                onClick={() => router.push("/contact")}
+                                href={"/contact"}
                             >
                                 Contact
-                            </li>
+                            </Link>
                         </ul>
                     </div>
                     <div className="px-2.5 flex items-center h-6">
@@ -132,42 +130,42 @@ export const NavBar = () => {
             {showMobileMenu && (
                 <div className="md:hidden w-full bg-white h-[175.125px] relative z-10">
                     <ul className="h-full grid grid-rows-4">
-                        <li 
+                        <Link 
                             className={`flex items-center font-navbar cursor-pointer text-[14.6px] ${path === "/" ? "text-[rgb(105,137,39)]" : ""} hover:text-[rgb(105,137,39)] px-6 sm:px-8`}
+                            href={"/"}
                             onClick={() => {
                                 setShowMobileMenu(false)
-                                router.push("/")
                             }}
                         >
                             Home
-                        </li>
-                        <li 
+                        </Link>
+                        <Link 
                             className={`flex items-center font-navbar cursor-pointer text-[14.6px] ${path === "/shop" ? "text-[rgb(105,137,39)]" : ""} hover:text-[rgb(105,137,39)] px-6 sm:px-8`}
+                            href={"/shop"}
                             onClick={() => {
                                 setShowMobileMenu(false)
-                                router.push("/shop")
                             }}
                         >
                             Shop
-                        </li>
-                        <li 
+                        </Link>
+                        <Link 
                             className={`flex items-center font-navbar cursor-pointer text-[14.6px] ${path === "/about" ? "text-[rgb(105,137,39)]" : ""} hover:text-[rgb(105,137,39)] px-6 sm:px-8`}
+                            href={"/about"}
                             onClick={() => {
                                 setShowMobileMenu(false)
-                                router.push("/about")
                             }}
                         >
                             About
-                        </li>
-                        <li 
+                        </Link>
+                        <Link 
                             className={`flex items-center font-navbar cursor-pointer text-[14.6px] ${path === "contact" ? "text-[rgb(105,137,39)]" : ""} hover:text-[rgb(105,137,39)] px-6 sm:px-8`}
+                            href={"/contact"}
                             onClick={() => {
                                 setShowMobileMenu(false)
-                                router.push("/contact")
                             }}
                         >
                             Contact
-                        </li>
+                        </Link>
                     </ul>
                 </div>
             )}

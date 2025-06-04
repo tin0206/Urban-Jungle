@@ -3,8 +3,8 @@
 import { CartItem } from "@/app/model"
 import { useEffect, useState } from "react"
 import { Button } from "./ui/button"
-import { useRouter } from "next/navigation"
 import { useCartStore } from "@/stores/useCartStore"
+import Link from "next/link"
 
 export default function CartItemList() {
   const [cartItems, setCartItems] = useState<CartItem[]>([])
@@ -12,7 +12,6 @@ export default function CartItemList() {
   const [showLoading, setShowLoading] = useState<number | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const { click, increment } = useCartStore()
-  const router = useRouter()
 
   useEffect(() => {
     const fetchCartItems = async () => {
@@ -38,6 +37,7 @@ export default function CartItemList() {
   }, [click])
 
   async function handleRemoveItem(itemId: number) {
+    setIsLoading(true)
     try {
       await fetch(`http://localhost:8000/api/shopping_cart/removeItem`, {
         method: "POST",
@@ -67,12 +67,13 @@ export default function CartItemList() {
               </p>
             </div>
             <div className="w-full flex-1 p-4 flex justify-center">
-              <Button 
-                className="w-full p-[21.44px] rounded-3xl bg-[rgb(136,173,53)] hover:bg-[#698927] cursor-pointer"
-                onClick={() => router.push("/shop")}
-              >
-                <span className="font-navbar text-[16px] font-medium text-white">Continue Shopping</span>
-              </Button>
+              <Link href={"/shop"}>
+                <Button 
+                  className="w-full p-[21.44px] rounded-3xl bg-[rgb(136,173,53)] hover:bg-[#698927] cursor-pointer"
+                >
+                  <span className="font-navbar text-[16px] font-medium text-white">Continue Shopping</span>
+                </Button>
+              </Link>
             </div>
           </div>
         ) : (
@@ -82,17 +83,19 @@ export default function CartItemList() {
                 {cartItems.map((item, id) => (
                   <li key={id} className="w-full relative flex py-[19.2px] gap-x-2.5 border-b last:border-b-0">
                     <div>
-                      <img src="./default.jpg" alt="" className="size-[64px] mb-2" />
+                      <Link href={`/product/${item.plant_name.replace(/\s+/g, '-').toLowerCase()}`}>
+                        <img src="/default.jpg" alt="" className="size-[64px] mb-2 cursor-pointer" />
+                      </Link>
                     </div>
                     <div className="flex-1 pt-1">
                       <div className="flex justify-between mb-[5.28px]">
-                        <h3 className="text-[16px] font-navbar text-[rgb(34,34,34)] leading-[24px]">
-                          {item.plant_name}
-                        </h3>
+                        <Link href={`/product/${item.plant_name.replace(/\s+/g, '-').toLowerCase()}`}>
+                          <h3 className="text-[16px] cursor-pointer font-navbar text-[rgb(34,34,34)] leading-[24px]">{item.plant_name}</h3>
+                        </Link>
                         <Button
                           variant={"ghost"}
                           className="size-5 rounded-full border-2 cursor-pointer p-[10px] text-gray-400 bg-white hover:text-black hover:border-black"
-                        onClick={() => {
+                          onClick={() => {
                           setShowLoading(id)
                           handleRemoveItem(item.id)
                         }}

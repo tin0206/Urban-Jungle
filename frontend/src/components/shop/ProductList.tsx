@@ -3,6 +3,7 @@
 import { Plant } from "@/app/model"
 import { useEffect, useState } from "react"
 import AddToCart from "../AddToCart"
+import Link from "next/link"
 
 export default function ProductList() {
     const [products, setProducts] = useState<Plant[]>([])
@@ -44,20 +45,23 @@ export default function ProductList() {
                     </div>
                     <ul className="grid grid-cols-2 md:grid-cols-3 gap-x-5 gap-y-6">
                         {products.map((product, id) => (
-                            <li key={id} className="mb-2 h-[298px] md:h-[338px] lg:h-[442px] xl:h-[534px] px-2.5">
+                            <li 
+                                key={id} className="mb-2 h-[298px] md:h-[338px] lg:h-[442px] xl:h-[534px] px-2.5"
+                            >
                                 <div
                                     className={`relative cursor-pointer w-full h-[226px] sm:h-[250px] md:h-[233px] lg:h-[327px] xl:h-[414px]`}
                                     onMouseOver={() => setDisplayCart(id)}
                                     onMouseOut={() => setDisplayCart(null)}
                                 >
-                                    <img
-                                        src="./default.jpg" alt=""
-                                        className="w-full h-full"
-                                    />
+                                    <Link href={`/product/${product.name.replace(/\s+/g, '-').toLowerCase()}`}>
+                                        <img src="/default.jpg" alt="" className="w-full h-full" />
+                                    </Link>
                                     <AddToCart displayCart={displayCart} id={id} plantId={product.id} />
                                 </div>
                                 <div className="mt-2">
-                                    <h2 className="text-[16px] font-medium cursor-pointer">{product.name}</h2>
+                                    <Link href={`/product/${product.name.replace(/\s+/g, '-').toLowerCase()}`}>
+                                        <h2 className="text-[16px] font-medium cursor-pointer">{product.name}</h2>
+                                    </Link>
                                     <p className="text-[13.6px] font-navbar text-gray-400">{product.category_name}</p>
                                     <p className="text-[14.4px] font-navbar font-bold">${product.price.toFixed(2)}</p>
                                 </div>

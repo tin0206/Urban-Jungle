@@ -26,6 +26,10 @@ Route::get('/categories', [CategoryController::class, 'apiIndex']);
 // API route for plants
 Route::get('/plants', [\App\Http\Controllers\PlantController::class, 'apiIndex']);
 
+Route::get('/plants/{plant_name}', [\App\Http\Controllers\PlantController::class, 'apiIndex']);
+
+Route::get('/plants/{plant_name}/related', [\App\Http\Controllers\PlantController::class, 'apiRelated']);
+
 // API route for shopping carts
 Route::get('/shopping_cart/items', [ShoppingCartController::class, 'apiIndex']);
 

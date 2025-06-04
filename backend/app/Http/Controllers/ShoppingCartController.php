@@ -50,6 +50,7 @@ class ShoppingCartController extends Controller
         //
         $validated = $request->validate([
             'plant_id' => 'required|integer|exists:plants,id',
+            'quantity' => 'nullable|integer|min:1',
         ]);
 
         $quantity = $validated['quantity'] ?? 1;

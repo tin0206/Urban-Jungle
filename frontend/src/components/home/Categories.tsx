@@ -25,7 +25,7 @@ export default function Categories() {
               <li key={id} className="w-full">
                 <div>
                   <img
-                    src="./default.jpg" alt=""
+                    src="/default.jpg" alt=""
                   />
                 </div>
                 <h2 className="text-[21px] w-full text-gray-800 mt-2">

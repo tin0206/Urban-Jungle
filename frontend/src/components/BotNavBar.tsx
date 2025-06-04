@@ -1,12 +1,12 @@
 "use client"
 
-import { usePathname, useRouter } from "next/navigation"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { FaFacebook, FaInstagram, FaYoutube } from "react-icons/fa"
 import { FaXTwitter } from "react-icons/fa6"
 
 export default function BotNavBar() {
     const path = usePathname()
-    const router = useRouter()
 
     return (
         <div className="w-full flex flex-col justify-center items-center px-6 md:px-8 lg:px-10 bg-[rgb(236,244,211)]">
@@ -17,30 +17,30 @@ export default function BotNavBar() {
                     </div>
                     <div className="col-span-1 md:col-span-2 flex justify-center items-center">
                         <ul className="flex mx-[24.75px] lg:mx-[88.75px] xl:mx-[143.750px] font-navbar text-[16px]">
-                            <li 
+                            <Link 
                                 className={`mr-8 cursor-pointer hover:text-[rgb(105,137,39)] ${path === "/" ? "text-[rgb(105,137,39)]" : ""} `}
-                                onClick={() => router.push("/")}
+                                href="/"
                             >
                                 Home
-                            </li>
-                            <li 
+                            </Link>
+                            <Link 
                                 className={`mr-8 cursor-pointer hover:text-[rgb(105,137,39)] ${path === "/shop" ? "text-[rgb(105,137,39)]" : ""}`}
-                                onClick={() => router.push("/shop")}
+                                href="/shop"
                             >
                                 Shop
-                            </li>
-                            <li 
+                            </Link>
+                            <Link 
                                 className={`mr-8 cursor-pointer hover:text-[rgb(105,137,39)] ${path === "/about" ? "text-[rgb(105,137,39)]" : ""}`}
-                                onClick={() => router.push("/about")}
+                                href="/about"
                             >
                                 About
-                            </li>
-                            <li 
+                            </Link>
+                            <Link 
                                 className={`cursor-pointer hover:text-[rgb(105,137,39)] ${path === "/contact" ? "text-[rgb(105,137,39)]" : ""}`}
-                                onClick={() => router.push("/contact")}
+                                href="/contact"
                             >
                                 Contact
-                            </li>
+                            </Link>
                         </ul>
                     </div>
                     <div className="col-span-1 flex justify-center md:justify-end">

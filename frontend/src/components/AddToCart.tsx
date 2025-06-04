@@ -36,7 +36,9 @@ export default function AddToCart( { displayCart, id, plantId }: AddToCartProps)
   }
 
   return (
-    <div>
+    <div
+      onClick={(e) => e.stopPropagation()}
+    >
       <div 
         className={`flex items-center justify-center absolute top-4 right-4 border-2 border-transparent bg-white rounded-full size-7
           ${displayCart === id ? "" : "hidden"}
