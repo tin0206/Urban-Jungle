@@ -35,6 +35,15 @@ class ShoppingCartController extends Controller
     }
 
     /**
+     * Get the total quantity of items in the shopping cart.
+     */
+    public function getQuantity()
+    {
+        $totalQuantity = ShoppingCart::count();
+        return response()->json(['total_quantity' => $totalQuantity]);
+    }
+
+    /**
      * Show the form for creating a new resource.
      */
     public function create()

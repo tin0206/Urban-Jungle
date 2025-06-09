@@ -44,7 +44,7 @@ export default function RelatedProducts({ product }: RelatedProductsProps) {
               onMouseOver={() => setDisplayCart(id)}
               onMouseOut={() => setDisplayCart(null)}
             >
-              <Link href={`/shop/${relatedProduct.name.replace(/\s+/g, '-').toLowerCase()}`}>
+              <Link href={`/product/${relatedProduct.name.replace(/\s+/g, '-').toLowerCase()}`}>
                 <img src="/default.jpg" alt="" className="w-full h-full" />
               </Link>
               <AddToCart displayCart={displayCart} id={id} plantId={relatedProduct.id} />

@@ -5,6 +5,7 @@ import { useEffect, useState } from "react"
 import { Button } from "./ui/button"
 import { useCartStore } from "@/stores/useCartStore"
 import Link from "next/link"
+import useShoppingCart from "@/stores/useShoppingCart"
 
 export default function CartItemList() {
   const [cartItems, setCartItems] = useState<CartItem[]>([])
@@ -12,6 +13,7 @@ export default function CartItemList() {
   const [showLoading, setShowLoading] = useState<number | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const { click, increment } = useCartStore()
+  const { setShowShoppingCart } = useShoppingCart() 
 
   useEffect(() => {
     const fetchCartItems = async () => {
@@ -130,16 +132,21 @@ export default function CartItemList() {
               </p>
             </div>
             <div className="w-full flex-1 p-[21.44px] flex flex-col">
+              <Link 
+                href={"/cart"}
+                onClick={() => setShowShoppingCart(false)}
+              >
                 <Button 
                   className="w-full h-[46px] py-[15px] px-[30px] rounded-3xl bg-[rgb(136,173,53)] hover:bg-[#698927] cursor-pointer mr-2.5 mb-[5px]"
                 >
                   <span className="font-navbar text-[16px] font-medium text-white">View cart</span>
                 </Button>
-                <Button 
-                  className="w-full h-[46px] py-[15px] px-[30px] rounded-3xl bg-[rgb(136,173,53)] hover:bg-[#698927] cursor-pointer mr-2.5 mt-[10px]"
-                >
-                  <span className="font-navbar text-[16px] font-medium text-white">Checkout</span>
-                </Button>
+              </Link>
+              <Button 
+                className="w-full h-[46px] py-[15px] px-[30px] rounded-3xl bg-[rgb(136,173,53)] hover:bg-[#698927] cursor-pointer mr-2.5 mt-[10px]"
+              >
+                <span className="font-navbar text-[16px] font-medium text-white">Checkout</span>
+              </Button>
             </div>
           </div>
         )}

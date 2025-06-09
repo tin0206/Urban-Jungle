@@ -9,6 +9,7 @@ import { usePathname } from "next/navigation"
 import useMobileMenu from "@/stores/useMobileMenu"
 import useShoppingCart from "@/stores/useShoppingCart"
 import Link from 'next/link'
+import ShoppingCart from "./ShoppingCart"
 
 export const NavBar = () => {
     const { showMobileMenu, setShowMobileMenu } = useMobileMenu()
@@ -102,14 +103,7 @@ export const NavBar = () => {
                             </li>
                         </ul>
                     </div>
-                    <div 
-                        className="cursor-pointer flex items-center pl-2.5"
-                        onClick={() => {
-                            setShowShoppingCart(true)
-                        }}
-                    >
-                        <FaShoppingBag className={`${showMainMenu ? "text-white" : "text-[rgb(136,173,53)]"} size-5`} />
-                    </div>
+                    <ShoppingCart showMainMenu={showMainMenu} />
                 </div>
                 <div className="flex md:hidden">
                     <Button

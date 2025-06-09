@@ -4,17 +4,20 @@ import { Plant } from "@/app/model"
 import { Button } from "../ui/button"
 import { useEffect, useRef, useState } from "react"
 import { useCartStore } from "@/stores/useCartStore"
+import { TiTick } from "react-icons/ti"
+import Link from "next/link"
 
 type MainPartProps = {
     product: Plant
 }
 
 export default function MainPart({ product }: MainPartProps) {
-    const inputRef = useRef<HTMLInputElement>(null)
+    let inputRef = useRef<HTMLInputElement>(null)
     const [addingToCart, setAddingToCart] = useState(false)
     const [display, setDisplay] = useState<string | null>("description")
     const { increment } = useCartStore()
     const [scrollY, setScrollY] = useState<number>(0)
+    const [addSuccessful, setAddSuccessful] = useState<boolean>(false)
 
     async function handleAddToCart(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
@@ -32,6 +35,11 @@ export default function MainPart({ product }: MainPartProps) {
                         quantity: value
                     })
                 })
+                .then(res => {
+                    if (res.status === 200 || res.status === 201) {
+                        setAddSuccessful(true)
+                    }
+                })
                 increment()
             } catch (error) {
                 console.error("Error adding to cart:", error)
@@ -41,22 +49,50 @@ export default function MainPart({ product }: MainPartProps) {
                 inputRef.current!.value = "1"
             }, 1000)
         }
+        else {
+            setAddingToCart(false)
+            inputRef.current!.value = "1"
+            alert("Please enter a valid quantity.")
+        }
     }
 
     useEffect(() => {
         function handleScroll() {
-        setScrollY(window.scrollY)
+            setScrollY(window.scrollY)
         }
 
         window.addEventListener('scroll', handleScroll)
 
         return () => {
-        window.removeEventListener('scroll', handleScroll)
+            window.removeEventListener('scroll', handleScroll)
         }
     }, [])
 
     return (
         <>
+            {addSuccessful && (
+                <div className="w-full h-[99.922px] sm:h-[74.75px] md:h-[81.px] mb-8">
+                    <div className="w-full h-full bg-[#f7f6f7] py-[14.592px] md:py-4 px-[29.184px] md:px-8 flex flex-col sm:flex-row sm:items-center justify-between border-t-[3px] border-t-[rgb(136,173,53)]">
+                        <div className="flex items-center">
+                            <div className="w-[33px] h-[20px] pr-[8px]">
+                                <div className="w-[20px] h-full flex items-center justify-center border-foreground bg-[rgb(136,173,53)] rounded-full">
+                                    <TiTick className="size-[20px] text-white" />
+                                </div>
+                            </div>
+                            <div className="font-navbar text-[14.592px] md:text-[16px] leading-[21.888px] md:leading-[24px] text-[rgb(69,69,69)]">
+                                "{product.name}" has been added to your cart.
+                            </div>
+                        </div>
+                        <Link href={"/cart"}>
+                            <Button 
+                                className="w-[118.766px] md:w-[128.828px] h-[42.5938] md:h-[46px] py-[14px] md:py-[15px] px-[28px] md:px-[30px] rounded-3xl bg-[rgb(136,173,53)] hover:bg-[#698927] cursor-pointer"
+                            >
+                                <span className="font-navbar text-[16px] font-medium text-white">View cart</span>
+                            </Button>
+                        </Link>
+                    </div>
+                </div>
+            )}        
             <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-y-10 md:gap-y-0 md:gap-x-12">
                 <div>
                     <img src="/default.jpg" alt="" className="aspect-12/13" />
