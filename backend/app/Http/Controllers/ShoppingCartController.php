@@ -109,6 +109,23 @@ class ShoppingCartController extends Controller
     public function update(Request $request, ShoppingCart $shoppingCart)
     {
         //
+        $validated = $request->validate([
+            'items' => 'required|array',
+            'items.*.id' => 'required|integer|exists:shopping_carts,id',
+            'items.*.quantity' => 'required|integer|min:1',
+        ]);
+
+        foreach ($validated['items'] as $itemData) {
+            $item = ShoppingCart::find($itemData['id']);
+            if ($item) {
+                $item->quantity = $itemData['quantity'];
+                $item->save();
+            } else {
+                return response()->json(['message' => 'Item not found in the shopping cart.'], 404);
+            }
+        }
+
+        return response()->json(['message' => 'Shopping cart updated successfully.'], 200);
     }
 
     /**

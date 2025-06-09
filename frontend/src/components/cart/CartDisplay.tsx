@@ -10,9 +10,11 @@ import Link from "next/link"
 export default function CartDisplay() {
     const [cartItems, setCartItems] = useState<CartItem[]>([])
     const [quantity, setQuantity] = useState<number[]>([])
+    const [numberOfItems, setNumberOfItems] = useState(0)
     const [total, setTotal] = useState(0)
     const [subtotal, setSubtotal] = useState<number[]>([])
     const { click, increment } = useCartStore()
+    const [isLoading, setIsLoading] = useState(false)
 
     useEffect(() => {
         const fetchCartItems = async () => {
@@ -26,6 +28,9 @@ export default function CartDisplay() {
             .then((data) => {
                 setCartItems(data)
                 setQuantity(data.map((item: CartItem) => item.quantity))
+                const totalItems = data.reduce((acc: number, item: CartItem) => acc + item.quantity, 0)
+                setNumberOfItems(totalItems)
+                setTotal(data.reduce((acc: number, item: CartItem) => acc + (item.price * item.quantity), 0))
             })
             .catch((error) => {
                 console.error("Error fetching cart items:", error)
@@ -37,10 +42,60 @@ export default function CartDisplay() {
 
     useEffect(() => {
         const subTotal = cartItems.map((item, index) => item.price * quantity[index])
-        setSubtotal(subTotal)  
-        const totalAmount = subTotal.reduce((acc, curr) => acc + curr, 0)
-        setTotal(totalAmount)
-    }, [cartItems, quantity])
+        setSubtotal(subTotal)
+    }, [cartItems, quantity, click])
+
+    async function handleRemoveItem(itemId: number) {
+        setIsLoading(true)
+        try {
+            await fetch(`http://localhost:8000/api/shopping_cart/removeItem`, {
+                method: "POST",
+                headers: {
+                "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ item_id: itemId }),
+            })
+        } catch (error) {
+            console.error("Error removing item from cart:", error) 
+        }
+
+        setTimeout(() => {
+            setIsLoading(false)
+            increment()
+        }, 1000)
+    }
+
+    async function updateCart() {
+        setIsLoading(true)
+        try {
+            const itemsChangeList = cartItems.map((item: CartItem, index) => {
+                if (item.quantity !== quantity[index]) {
+                    return {
+                        id: item.id,
+                        quantity: quantity[index]
+                    }
+                }
+                return null
+            })
+
+            if (itemsChangeList.length > 0) {
+                await fetch("http://localhost:8000/api/shopping_cart/updateCart", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ items: itemsChangeList.filter(item => item !== null) }),
+                })
+                increment()
+            }
+        } catch (error) {
+            console.error("Error updating cart:", error)
+        }
+
+        setTimeout(() => {
+            setIsLoading(false)
+        }, 1000)
+    }
 
     return (
         <div className="w-full">
@@ -59,7 +114,7 @@ export default function CartDisplay() {
                             </div>
                         </div>
                     ) : (
-                        <div>
+                        <div className="relative">
                             <table className="w-full border">
                                 <thead>
                                     <tr className="h-[46.375px] text-center">
@@ -86,8 +141,9 @@ export default function CartDisplay() {
                                                 <Button
                                                     variant={"ghost"}
                                                     className="size-5 rounded-full border-2 cursor-pointer p-[10px] text-gray-400 bg-white hover:text-black hover:border-black"
+                                                    disabled={isLoading}
                                                     onClick={() => {
-
+                                                        handleRemoveItem(item.id)
                                                     }}
                                                 >
                                                     x
@@ -157,6 +213,7 @@ export default function CartDisplay() {
                                         <td colSpan={3} className="text-right pl-4 py-[11.2px] pr-4 lg:pr-16">
                                             <Button 
                                                 className="py-[14px] px-7 rounded-3xl h-[46px] bg-[rgb(136,173,53)] hover:bg-[#698927] cursor-pointer"
+                                                onClick={updateCart}
                                             >
                                                 <span className="font-navbar text-[16px] font-medium text-white">Update cart</span>
                                             </Button>
@@ -164,6 +221,16 @@ export default function CartDisplay() {
                                     </tr>
                                 </tbody>
                             </table>
+                            { isLoading && (
+                                <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-[rgba(0,0,0,0.2)] bg-opacity-50">
+                                    <div role="status">
+                                        <svg aria-hidden="true" className="size-6 text-gray-200 animate-spin fill-[rgb(136,173,53)]" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
+                                            <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     )}
             </div>
@@ -179,21 +246,34 @@ export default function CartDisplay() {
                         </Link>
                     ) : (
                         <div className="w-full flex justify-center md:justify-end">
-                            <div className="w-6/12 h-[349.406px] max-w-[450px] border">
+                            <div className="h-[349.406px] max-w-[800px] border">
                                 <div className="w-full flex items-center border-b border-b-[rgb(209,209,209)] mb-5">
                                     <h2 className="px-[42px] py-[29.4px] h-[110.18px] font-medium leading-[39.3984px] md:leading-[50.4px] text-[32.832px] md:text-[42px] text-[rgb(34,34,34)] flex items-center">
                                         Cart totals
                                     </h2>
                                 </div>
-                                <div className="px-5">
-                                    <div className="flex items-center">
-                                        <div>
+                                <div className="px-5 flex flex-col items-center">
+                                    <div className="flex items-center px-4 py-[11.2px] border-b">
+                                        <div className="text-[16px] font-navbar text-[rgb(69,69,69)] leading-[24px] font-medium w-[156.562px]">
                                             Items
                                         </div>
-                                        <div>
-                                            {cartItems.length}
+                                        <div className="text-[16px] font-navbar text-[rgb(69,69,69)] leading-[24px] font-medium w-[234.875px]">
+                                            {numberOfItems}
                                         </div>
                                     </div>
+                                    <div className="flex items-center px-4 py-[11.2px] border-b mb-5">
+                                        <div className="text-[16px] font-navbar text-[rgb(69,69,69)] leading-[24px] font-medium w-[156.562px]">
+                                            Total
+                                        </div>
+                                        <div className="text-[16px] font-navbar text-[rgb(69,69,69)] leading-[24px] font-medium w-[234.875px]">
+                                            ${total.toFixed(2)}
+                                        </div>
+                                    </div>
+                                    <Button 
+                                        className="mb-[17.6px] p-[17.6px] rounded-4xl h-[66.875px] w-10/12 bg-[rgb(136,173,53)] hover:bg-[#698927] cursor-pointer"
+                                    >
+                                        <span className="font-navbar text-[16px] font-medium text-white">Proceed to checkout</span>
+                                    </Button>
                                 </div>
                             </div>
                         </div>

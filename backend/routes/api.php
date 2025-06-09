@@ -37,4 +37,6 @@ Route::get('/shopping_cart/quantity', [ShoppingCartController::class, 'getQuanti
 
 Route::post('/shopping_cart/addItem', [ShoppingCartController::class, 'store']);
 
+Route::post('/shopping_cart/updateCart', [ShoppingCartController::class, 'update']);
+
 Route::post('/shopping_cart/removeItem', [ShoppingCartController::class, 'removeItem']);

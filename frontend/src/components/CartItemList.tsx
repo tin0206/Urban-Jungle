@@ -97,6 +97,7 @@ export default function CartItemList() {
                         <Button
                           variant={"ghost"}
                           className="size-5 rounded-full border-2 cursor-pointer p-[10px] text-gray-400 bg-white hover:text-black hover:border-black"
+                          disabled={showLoading === id && isLoading}
                           onClick={() => {
                           setShowLoading(id)
                           handleRemoveItem(item.id)
