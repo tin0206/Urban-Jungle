@@ -160,6 +160,15 @@ export const NavBar = () => {
                         >
                             Contact
                         </Link>
+                        <Link
+                            className={`flex items-center font-navbar cursor-pointer text-[14.6px] ${path === "contact" ? "text-[rgb(105,137,39)]" : ""} hover:text-[rgb(105,137,39)] px-6 sm:px-8`}
+                            href={"/cart"}
+                            onClick={() => {
+                                setShowMobileMenu(false)
+                            }}
+                        >
+                            Cart
+                        </Link>
                     </ul>
                 </div>
             )}

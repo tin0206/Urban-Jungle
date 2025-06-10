@@ -4,14 +4,13 @@ import { Plant } from "@/app/model";
 import { useEffect, useState } from "react";
 import MainPart from "./MainPart";
 import RelatedProducts from "./RelatedProducts";
- "../MainPart";
 
 type ProductPageProps = {
-    product_name: string;
+    product_name: string
 }
 
 export default function ContentContainer({ product_name }: ProductPageProps) {
-    const [product, setProduct] = useState<Plant>();
+    const [product, setProduct] = useState<Plant>()
 
     useEffect(() => {
         async function fetchProduct() {
@@ -24,17 +23,17 @@ export default function ContentContainer({ product_name }: ProductPageProps) {
                 })
                 .then(response => response.json())
                 .then(data => {
-                    setProduct(data);
+                    setProduct(data)
                 })
                 .catch(error => {
-                    console.error("Error fetching product:", error);
+                    console.error("Error fetching product:", error)
                 })
             } catch (error) {
                 console.error("Error fetching product:", error)
             }
         }
 
-        fetchProduct();
+        fetchProduct()
     }, [])
   
     return (

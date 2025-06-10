@@ -33,11 +33,12 @@ class PlantController extends Controller
             $plant = $query->whereRaw('LOWER(name) = ?', [$plantName])->first();
             if ($plant) {
                 return response()->json([
-                'id' => $plant->id,
-                'name' => $plant->name,
-                'category_name' => $plant->category->name,
-                'description' => $plant->description,
-                'price' => $plant->price
+                    'id' => $plant->id,
+                    'name' => $plant->name,
+                    'category_name' => $plant->category->name,
+                    'description' => $plant->description,
+                    'price' => $plant->price,
+                    'date_added' => $plant->created_at->format('Y-m-d H:i:s')
                 ]);
             }
             return response()->json(['error' => 'Plant not found'], 404);
@@ -49,11 +50,34 @@ class PlantController extends Controller
                 'name' => $plant->name,
                 'category_name' => $plant->category->name,
                 'description' => $plant->description,
-                'price' => $plant->price
+                'price' => $plant->price,
+                'date_added' => $plant->created_at->format('Y-m-d H:i:s')
             ];
         });
 
         return response()->json($plants);
+    }
+
+    /**
+     * Display a listing of new products for API.
+     */
+    public function apiNewProducts(Request $request)
+    {
+        $newProducts = Plant::with('category')
+            ->orderBy('created_at', 'desc')
+            ->limit(9)
+            ->get()
+            ->map(function ($plant) {
+                return [
+                    'id' => $plant->id,
+                    'name' => $plant->name,
+                    'category_name' => $plant->category->name,
+                    'description' => $plant->description,
+                    'price' => $plant->price
+                ];
+            });
+
+        return response()->json($newProducts);
     }
 
     /**

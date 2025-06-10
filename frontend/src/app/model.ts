@@ -10,6 +10,7 @@ export type Plant = {
     price: number;
     imageUrl: string;
     description: string;
+    date_added: string;
 }
 
 export type CartItem = {
@@ -18,4 +19,10 @@ export type CartItem = {
     plant_name: string;
     quantity: number;
     price: number;
+}
+
+export type TempDeleteCartItem = {
+    plant_id: number;
+    plant_name: string;
+    quantity: number;
 }

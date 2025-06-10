@@ -1,6 +1,7 @@
 "use client"
 
 import { Category } from "@/app/model"
+import Link from "next/link"
 import { useEffect, useState } from "react"
 
 export default function Categories() {
@@ -23,14 +24,16 @@ export default function Categories() {
           <ul className="max-w-[1200px] grid grid-cols-1 md:grid-cols-4 gap-5">
             {categories.map((category, id) => (
               <li key={id} className="w-full">
-                <div>
-                  <img
-                    src="/default.jpg" alt=""
-                  />
-                </div>
-                <h2 className="text-[21px] w-full text-gray-800 mt-2">
-                  {category.name}
-                </h2>
+                <Link href={`/category/${category.name.replace(/\s+/g, '-').toLowerCase()}`}>
+                  <div className="cursor-pointer">
+                    <img src="/default.jpg" alt="" />
+                  </div>
+                </Link>
+                <Link href={`/category/${category.name.replace(/\s+/g, '-').toLowerCase()}`}>
+                  <h2 className="text-[21px] w-full text-gray-800 mt-2 cursor-pointer">
+                    {category.name}
+                  </h2> 
+                </Link>
               </li>
             ))}
           </ul>

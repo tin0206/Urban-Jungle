@@ -1,43 +1,42 @@
 "use client"
 
 import { Plant } from "@/app/model"
-import { useEffect, useState } from "react"
 import AddToCart from "../AddToCart"
 import Link from "next/link"
+import { useEffect, useState } from "react"
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa"
 
-export default function ProductList() {
-    const [products, setProducts] = useState<Plant[]>([])
+type ProductListProps = {
+    plants: Plant[] | null
+}
+
+export default function ProductList({ plants }: ProductListProps) {
+    const [displayCart, setDisplayCart] = useState<number | null>(null)
     const [displayList, setDisplayList] = useState<Plant[]>([])
     const [sortBy, setSortBy] = useState<string>("menu_order")
+    const [offSet, setOffSet] = useState(9)
     const [maxPage, setMaxPage] = useState(0)
-    const [offSet, setOffSet] = useState(6)
     const [currentPage, setCurrentPage] = useState(0)
-    const [displayCart, setDisplayCart] = useState<number | null>(null)
-    
-    useEffect(() => {
-        fetch("http://localhost:8000/api/plants")
-        .then((response) => response.json())
-        .then((data) => {
-            setProducts(data)
-            setMaxPage(Math.ceil(data.length / offSet))
-            setDisplayList(data.slice(0, offSet))
-        })
-        .catch((error) => {
-            console.error("Error fetching products:", error)
-        })
-    }, [])
 
     useEffect(() => {
+        if (plants) {
+            setMaxPage(Math.ceil(plants.length / offSet))
+            setDisplayList(plants.slice(0, offSet))
+        }
+    }, [plants])
+
+    useEffect(() => {
+        if (!plants) return
+
         const startIndex = currentPage * offSet
         const endIndex = startIndex + offSet
-        setDisplayList(products.slice(startIndex, endIndex))
-    }, [currentPage, products, offSet])
+        setDisplayList(plants.slice(startIndex, endIndex))
+    }, [currentPage, plants, offSet])
 
     useEffect(() => {
-        if (products.length === 0) return
+        if (!plants) return
 
-        let sortedProducts = [...products]
+        let sortedProducts = [...plants]
         switch (sortBy) {
             case "popularity":
                 break
@@ -58,7 +57,7 @@ export default function ProductList() {
         const startIndex = currentPage * offSet
         const endIndex = startIndex + offSet
         setDisplayList(sortedProducts.slice(startIndex, endIndex))
-    }, [sortBy, products, currentPage])
+    }, [sortBy, currentPage, plants])
 
     return (
         <div className="w-full flex md:justify-center">
@@ -67,7 +66,7 @@ export default function ProductList() {
                     <div className=" grid grid-cols-1 sm:grid-cols-2 gap-x-[200px] lg:gap-x-[400px] xl:gap-x-[600px]">
                         <div>
                             <p className="my-[14.6px] md:my-[16px] ml-2 font-navbar text-[rgb(69,69,69)] text-[14.6px] md:text-[16px]">
-                                Showing all {products.length} results
+                                Showing all {plants?.length} results
                             </p>
                         </div>
                         <div className="flex sm:justify-end mr-2.5 mb-[29.184px] sm:mb-[36.48px] md:mb-10">
@@ -87,7 +86,7 @@ export default function ProductList() {
                         </div>
                     </div>
                     <ul className="grid grid-cols-2 md:grid-cols-3 gap-x-5 gap-y-6 relative">
-                        {displayList.map((product, id) => (
+                        {displayList.map((plant, id) => (
                             <li 
                                 key={id} className="mb-2 h-[298px] md:h-[338px] lg:h-[442px] xl:h-[534px] px-2.5"
                             >
@@ -96,17 +95,17 @@ export default function ProductList() {
                                     onMouseOver={() => setDisplayCart(id)}
                                     onMouseOut={() => setDisplayCart(null)}
                                 >
-                                    <Link href={`/product/${product.name.replace(/\s+/g, '-').toLowerCase()}`}>
+                                    <Link href={`/product/${plant.name.replace(/\s+/g, '-').toLowerCase()}`}>
                                         <img src="/default.jpg" alt="" className="w-full h-full" />
                                     </Link>
-                                    <AddToCart displayCart={displayCart} id={id} plantId={product.id} />
+                                    <AddToCart displayCart={displayCart} id={id} plantId={plant.id} />
                                 </div>
                                 <div className="mt-2">
-                                    <Link href={`/product/${product.name.replace(/\s+/g, '-').toLowerCase()}`}>
-                                        <h2 className="text-[16px] font-medium cursor-pointer">{product.name}</h2>
+                                    <Link href={`/product/${plant.name.replace(/\s+/g, '-').toLowerCase()}`}>
+                                        <h2 className="text-[16px] font-medium cursor-pointer">{plant.name}</h2>
                                     </Link>
-                                    <p className="text-[13.6px] font-navbar text-gray-400">{product.category_name}</p>
-                                    <p className="text-[14.4px] font-navbar font-bold">${product.price.toFixed(2)}</p>
+                                    <p className="text-[13.6px] font-navbar text-gray-400">{plant.category_name}</p>
+                                    <p className="text-[14.4px] font-navbar font-bold">${plant.price.toFixed(2)}</p>
                                 </div>
                             </li>
                         ))}

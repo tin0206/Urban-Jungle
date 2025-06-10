@@ -99,9 +99,11 @@ export default function MainPart({ product }: MainPartProps) {
                 </div>
                 <div className="py-2">
                     <div className="h-[22.078px] mb-[14.72px] flex gap-x-1 font-navbar text-[rgb(119,119,119)] text-[14.72px] leading-[22.08px]">
-                        <div className="cursor-pointer hover:underline">
-                            {product.category_name}
-                        </div>
+                        <Link href={`/category/${product.category_name.replace(/\s+/g, '-').toLowerCase()}`}>
+                            <div className="cursor-pointer hover:underline">
+                                {product.category_name}
+                            </div>
+                        </Link>
                         <div>
                             /
                         </div>
@@ -109,9 +111,11 @@ export default function MainPart({ product }: MainPartProps) {
                             {product.name}
                         </div>
                     </div>
-                    <div className="mb-4 cursor-pointer text-[rgb(136,173,53)] text-[16px] font-navbar transition-colors duration-[0.2s] hover:text-[rgb(105,137,39)]">
-                        {product.category_name}
-                    </div>
+                    <Link href={`/category/${product.category_name.replace(/\s+/g, '-').toLowerCase()}`}>
+                        <div className="mb-4 cursor-pointer text-[rgb(136,173,53)] text-[16px] font-navbar transition-colors duration-[0.2s] hover:text-[rgb(105,137,39)]">
+                            {product.category_name}
+                        </div>
+                    </Link>
                     <div className="mb-2.5 text-[rgb(34,34,34)] text-[20px] leading-[24px] font-semibold">
                         {product.name}
                     </div>

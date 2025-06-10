@@ -28,10 +28,38 @@ class CategoryController extends Controller
     /**
      * Display a listing of the resource for API.
      */
-    public function apiIndex()
+    public function apiIndex($category_name = null)
     {
         //
-        $categories = Category::all();
+        $query = Category::with('plants');
+
+        if ($category_name) {
+            $categoryName = str_replace('-', ' ', $category_name);
+            $category = $query->whereRaw('LOWER(name) = ?', [$categoryName])->first();
+
+            if ($category) {
+                $plants = $category->plants->map(function ($plant) {
+                    return [
+                        'id' => $plant->id,
+                        'name' => $plant->name,
+                        'category_name' => $plant->category->name,
+                        'description' => $plant->description,
+                        'price' => $plant->price,
+                        'date_added' => $plant->created_at->format('Y-m-d H:i:s')
+                    ];
+                });
+
+                return response()->json($plants);
+            }
+        }
+
+        $categories = $query->get()->map(function ($category) {
+            return [
+                'id' => $category->id,
+                'name' => $category->name,
+            ];
+        });
+
         return response()->json($categories);
     }
 

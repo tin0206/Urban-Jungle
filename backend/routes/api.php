@@ -23,8 +23,12 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 // API route for categories
 Route::get('/categories', [CategoryController::class, 'apiIndex']);
 
+Route::get('/categories/{category_name}', [CategoryController::class, 'apiIndex']);
+
 // API route for plants
 Route::get('/plants', [\App\Http\Controllers\PlantController::class, 'apiIndex']);
+
+Route::get('/plants/new-products', [\App\Http\Controllers\PlantController::class, 'apiNewProducts']);
 
 Route::get('/plants/{plant_name}', [\App\Http\Controllers\PlantController::class, 'apiIndex']);
 

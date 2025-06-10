@@ -1,4 +1,4 @@
-import ContentContainer from "@/components/product/ContentContainer";
+import ContentContainer from "@/components/product/ContentContainer"
 
 type ProductPageProps = {
     params: Promise<{ product_name: string }>;
