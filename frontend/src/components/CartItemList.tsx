@@ -143,11 +143,16 @@ export default function CartItemList() {
                   <span className="font-navbar text-[16px] font-medium text-white">View cart</span>
                 </Button>
               </Link>
-              <Button 
-                className="w-full h-[46px] py-[15px] px-[30px] rounded-3xl bg-[rgb(136,173,53)] hover:bg-[#698927] cursor-pointer mr-2.5 mt-[10px]"
+              <Link
+                href={"/checkout"}
+                onClick={() => setShowShoppingCart(false)}
               >
-                <span className="font-navbar text-[16px] font-medium text-white">Checkout</span>
-              </Button>
+                <Button 
+                  className="w-full h-[46px] py-[15px] px-[30px] rounded-3xl bg-[rgb(136,173,53)] hover:bg-[#698927] cursor-pointer mr-2.5 mt-[10px]"
+                >
+                  <span className="font-navbar text-[16px] font-medium text-white">Checkout</span>
+                </Button>
+              </Link>
             </div>
           </div>
         )}

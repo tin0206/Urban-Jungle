@@ -4,6 +4,10 @@ type CategoryPageProps = {
     params: Promise<{ category_name: string }>
 }
 
+export const metadata = {
+    title: 'Category - Generic eCommerce',
+}
+
 export default async function page({ params }: CategoryPageProps) {
     const { category_name } = await params
 

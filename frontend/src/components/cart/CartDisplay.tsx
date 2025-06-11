@@ -352,11 +352,13 @@ export default function CartDisplay() {
                                             ${total.toFixed(2)}
                                         </div>
                                     </div>
-                                    <Button 
-                                        className="mb-[17.6px] p-[17.6px] rounded-4xl h-[66.875px] w-10/12 bg-[rgb(136,173,53)] hover:bg-[#698927] cursor-pointer"
-                                    >
-                                        <span className="font-navbar text-[16px] font-medium text-white">Proceed to checkout</span>
-                                    </Button>
+                                    <Link href={"/checkout"}>
+                                        <Button 
+                                            className="mb-[17.6px] p-[17.6px] rounded-4xl h-[66.875px] w-10/12 bg-[rgb(136,173,53)] hover:bg-[#698927] cursor-pointer"
+                                        >
+                                            <span className="font-navbar text-[16px] font-medium text-white">Proceed to checkout</span>
+                                        </Button>
+                                    </Link>
                                 </div>
                                 { isLoading && (
                                     <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-[rgba(0,0,0,0.2)] bg-opacity-50">
