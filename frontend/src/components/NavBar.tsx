@@ -10,6 +10,7 @@ import useMobileMenu from "@/stores/useMobileMenu"
 import useShoppingCart from "@/stores/useShoppingCart"
 import Link from 'next/link'
 import ShoppingCart from "./ShoppingCart"
+import Profile from "./Profile"
 
 export const NavBar = () => {
     const { showMobileMenu, setShowMobileMenu } = useMobileMenu()
@@ -50,7 +51,7 @@ export const NavBar = () => {
                         href="/"
                     >
                         <img 
-                            className="w-[120px] md:w-[200px] h-[41px]" src={`${showMainMenu ? 
+                            className="w-[150px] md:w-[200px] h-[41px]" src={`${showMainMenu ? 
                                 "https://websitedemos.net/generic-ecommerce-02/wp-content/uploads/sites/1526/2025/03/header-logo.svg" : 
                                 "https://websitedemos.net/generic-ecommerce-02/wp-content/uploads/sites/1526/2025/03/normal-header.svg"
                             }`} 
@@ -87,7 +88,7 @@ export const NavBar = () => {
                             </Link>
                         </ul>
                     </div>
-                    <div className="px-2.5 flex items-center h-6">
+                    <div className="hidden px-2.5 lg:flex items-center h-6">
                         <ul className="flex">
                             <li className="cursor-pointer mr-2.5">
                                 <FaFacebook className={`${showMainMenu ? "text-white" : ""} size-4 hover:text-[#698927]`} />
@@ -104,6 +105,7 @@ export const NavBar = () => {
                         </ul>
                     </div>
                     <ShoppingCart showMainMenu={showMainMenu} />
+                    <Profile showMainMenu={showMainMenu} />
                 </div>
                 <div className="flex md:hidden">
                     <Button

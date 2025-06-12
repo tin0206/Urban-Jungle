@@ -4,10 +4,13 @@ import useShoppingCart from "@/stores/useShoppingCart"
 import { usePathname } from "next/navigation"
 import { useEffect } from "react"
 import ShoppingCartSidebar from "./ShoppingCartSidebar"
+import { useLoginModal } from "@/stores/useLoginModal"
+import LoginModal from "./LoginModal"
 
 export function ClientLayout({children}: {children: React.ReactNode}) {
     const pathname = usePathname()
     const { showShoppingCart, setShowShoppingCart } = useShoppingCart()
+    const { showLoginModal, setShowLoginModal } = useLoginModal()
 
     useEffect(() => {
         if (showShoppingCart) {
@@ -39,6 +42,11 @@ export function ClientLayout({children}: {children: React.ReactNode}) {
             >
                 {children}
             </div>
+            {
+                showLoginModal && (
+                    <LoginModal />
+                )
+            }
             <div
                 className={`fixed top-0 left-0 w-full h-full z-50 flex transition-opacity duration-300 ${
                     showShoppingCart ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"

@@ -66,31 +66,36 @@ export default function NewProducts() {
                         </div>
                     </li>
                 ))}
-                <div
-                    className="absolute size-8 border rounded-full bg-[rgb(136,173,53)] hover:bg-[#698927] top-1/2 left-0 flex items-center justify-center cursor-pointer"
-                    onClick={() => {
-                      if (currentPage > 0) {
-                        setCurrentPage(currentPage - 1)
-                      }
-                      else if (currentPage === 0) {
-                        setCurrentPage(maxPage - 1)
-                      }
-                    }}
-                >
-                    <FaAngleLeft className="text-white" />
-                </div>
-                <div 
-                    className="absolute size-8 border rounded-full bg-[rgb(136,173,53)] hover:bg-[#698927] top-1/2 right-0 flex items-center justify-center cursor-pointer"
-                    onClick={() => {
-                        if (currentPage < maxPage - 1) {
-                            setCurrentPage(currentPage + 1)
-                        } else if (currentPage === maxPage - 1) {
-                            setCurrentPage(0)
-                        }
-                    }}
-                >
-                    <FaAngleRight className="text-white" />
-                </div>
+                {
+                    displayList.length !== 0 && (
+                        <>
+                            <div
+                                className="absolute size-8 border rounded-full bg-[rgb(136,173,53)] hover:bg-[#698927] top-1/2 left-0 flex items-center justify-center cursor-pointer"
+                                onClick={() => {
+                                    if (currentPage > 0) {
+                                        setCurrentPage(currentPage - 1)
+                                    } else if (currentPage === 0) {
+                                        setCurrentPage(maxPage - 1)
+                                    }
+                                }}
+                            >
+                                <FaAngleLeft className="text-white" />
+                            </div>
+                            <div 
+                                className="absolute size-8 border rounded-full bg-[rgb(136,173,53)] hover:bg-[#698927] top-1/2 right-0 flex items-center justify-center cursor-pointer"
+                                onClick={() => {
+                                    if (currentPage < maxPage - 1) {
+                                        setCurrentPage(currentPage + 1)
+                                    } else if (currentPage === maxPage - 1) {
+                                        setCurrentPage(0)
+                                    }
+                                }}
+                            >
+                                <FaAngleRight className="text-white" />
+                            </div>
+                        </>
+                    )
+                }
             </ul>
         </div>
     </div>

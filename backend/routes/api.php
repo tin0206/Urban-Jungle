@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ShoppingCartController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -19,6 +20,11 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+// API route for user authentication
+Route::post('/signup', [UserController::class, 'store']);
+
+Route::post('/login', [UserController::class, 'login']);
 
 // API route for categories
 Route::get('/categories', [CategoryController::class, 'apiIndex']);
