@@ -6,6 +6,8 @@ import { Button } from "./ui/button"
 import { useCartStore } from "@/stores/useCartStore"
 import Link from "next/link"
 import useShoppingCart from "@/stores/useShoppingCart"
+import useUserStore from "@/stores/useUserStore"
+import useLogOut from "@/stores/useLogOut"
 
 export default function CartItemList() {
   const [cartItems, setCartItems] = useState<CartItem[]>([])
@@ -13,14 +15,18 @@ export default function CartItemList() {
   const [showLoading, setShowLoading] = useState<number | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const { click, increment } = useCartStore()
-  const { setShowShoppingCart } = useShoppingCart() 
+  const { user } = useUserStore()
+  const { setShowShoppingCart } = useShoppingCart()
+
 
   useEffect(() => {
     const fetchCartItems = async () => {
+      const authToken = localStorage.getItem("auth_token")
       await fetch("http://localhost:8000/api/shopping_cart/items", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${authToken}`,
         },
       })
       .then((response) => response.json())
@@ -36,7 +42,7 @@ export default function CartItemList() {
     setIsLoading(true)
     fetchCartItems()
     setIsLoading(false)
-  }, [click])
+  }, [click, user])
 
   async function handleRemoveItem(itemId: number) {
     setIsLoading(true)

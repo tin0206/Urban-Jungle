@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\ShoppingCart;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 class ShoppingCartController extends Controller
 {
@@ -20,7 +22,13 @@ class ShoppingCartController extends Controller
      */
     public function apiIndex()
     {
-        $items = ShoppingCart::with('plant')->get();
+        /** @var User $user */
+        $user = Auth::user();
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        $items = $user->shoppingCarts()->with('plant')->get();
         $items = $items->map(function ($item) {
             return [
                 'id' => $item->id,
@@ -30,7 +38,6 @@ class ShoppingCartController extends Controller
                 'price' => $item->plant->price,
             ];
         });
-
         return response()->json($items);
     }
 
@@ -39,7 +46,13 @@ class ShoppingCartController extends Controller
      */
     public function getQuantity()
     {
-        $totalQuantity = ShoppingCart::count();
+        /** @var User $user */
+        $user = Auth::user();
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        $totalQuantity = $user->shoppingCarts()->count();
         return response()->json(['total_quantity' => $totalQuantity]);
     }
 
@@ -56,15 +69,18 @@ class ShoppingCartController extends Controller
      */
     public function store(Request $request)
     {
-        //
         $validated = $request->validate([
             'plant_id' => 'required|integer|exists:plants,id',
             'quantity' => 'nullable|integer|min:1',
+            'user_id' => 'nullable|integer|exists:users,id',
         ]);
 
         $quantity = $validated['quantity'] ?? 1;
 
-        $existingItem = ShoppingCart::where('plant_id', $validated['plant_id'])->first();
+
+
+        $existingItem = ShoppingCart::where('plant_id', $validated['plant_id'])
+                                    ->first();
 
         if ($existingItem) {
             $existingItem->quantity += $quantity;
@@ -79,6 +95,7 @@ class ShoppingCartController extends Controller
         $cartItem = ShoppingCart::create([
             'plant_id' => $validated['plant_id'],
             'quantity' => $quantity,
+            'user_id' => $validated['user_id'],
         ]);
 
         return response()->json([
@@ -108,7 +125,6 @@ class ShoppingCartController extends Controller
      */
     public function update(Request $request, ShoppingCart $shoppingCart)
     {
-        //
         $validated = $request->validate([
             'items' => 'required|array',
             'items.*.id' => 'required|integer|exists:shopping_carts,id',

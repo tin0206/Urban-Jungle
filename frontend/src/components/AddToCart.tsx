@@ -1,6 +1,7 @@
 "use client"
 
 import { useCartStore } from "@/stores/useCartStore"
+import useUserStore from "@/stores/useUserStore"
 import { useState } from "react"
 import { FaShoppingBag } from "react-icons/fa"
 
@@ -14,6 +15,7 @@ export default function AddToCart( { displayCart, id, plantId }: AddToCartProps)
   const [displayInstruction, setDisplayInstruction] = useState<number | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const { increment } = useCartStore()
+  const { user } = useUserStore()
 
   async function addToCart(plantId: number) {
     setIsLoading(true)
@@ -23,7 +25,7 @@ export default function AddToCart( { displayCart, id, plantId }: AddToCartProps)
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ plant_id: plantId }),
+        body: JSON.stringify({ plant_id: plantId, user_id: user?.id }),
       })
       increment()
     } catch (error) {

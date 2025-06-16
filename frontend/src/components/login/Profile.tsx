@@ -5,6 +5,7 @@ import { Button } from "../ui/button"
 import useUserStore from "@/stores/useUserStore"
 import { useLoginModal } from "@/stores/useLoginModal"
 import useLogOut from "@/stores/useLogOut"
+import { useCartStore } from "@/stores/useCartStore"
 
 type ProfileProps = {
   showMainMenu: boolean;
@@ -14,6 +15,7 @@ export default function Profile({ showMainMenu }: ProfileProps) {
   const { user, clearUser } = useUserStore()
   const { setShowLoginModal } = useLoginModal()
   const { showLogOut, setShowLogOut } = useLogOut()
+  const { click, increment } = useCartStore()
 
   return (
     <div 
@@ -32,6 +34,8 @@ export default function Profile({ showMainMenu }: ProfileProps) {
                   className="mt-2 font-navbar cursor-pointer absolute w-[60px] h-[35px] text-[14px] translate-x-[-20px] transition duration-300"
                   onClick={() => {
                     clearUser()
+                    localStorage.removeItem("auth_token")
+                    increment()
                     setShowLogOut(false)
                   }}
                 >

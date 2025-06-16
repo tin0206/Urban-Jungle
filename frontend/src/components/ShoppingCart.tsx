@@ -2,6 +2,7 @@
 
 import { useCartStore } from "@/stores/useCartStore";
 import useShoppingCart from "@/stores/useShoppingCart";
+import useUserStore from "@/stores/useUserStore";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FaShoppingBag } from "react-icons/fa"
@@ -15,12 +16,15 @@ export default function ShoppingCart({ showMainMenu }: ShoppingCartProps) {
     const [quantity, setQuantity] = useState(0)
     const { click } = useCartStore()
     const path = usePathname()
+    const { user } = useUserStore()
 
     useEffect(() => {
+        const authToken = localStorage.getItem("auth_token")
         fetch("http://localhost:8000/api/shopping_cart/quantity", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
+                "Authorization": `Bearer ${authToken}`,
             },
         })
         .then((response) => response.json())
@@ -30,7 +34,7 @@ export default function ShoppingCart({ showMainMenu }: ShoppingCartProps) {
         .catch((error) => {
             console.error("Error fetching cart items:", error)
         })
-    }, [click])
+    }, [click, user])
 
     return (
         <div

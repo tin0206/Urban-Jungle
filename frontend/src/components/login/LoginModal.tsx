@@ -81,6 +81,7 @@ export default function LoginModal() {
                     email: data.email,
                     role: data.role,
                 })
+                localStorage.setItem("auth_token", data.token)
                 setShowLoginModal(false)
             } catch (error) {
                 setError("Failed to log in. Please try again.")

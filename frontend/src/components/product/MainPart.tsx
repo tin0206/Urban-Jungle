@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react"
 import { useCartStore } from "@/stores/useCartStore"
 import { TiTick } from "react-icons/ti"
 import Link from "next/link"
+import useUserStore from "@/stores/useUserStore"
 
 type MainPartProps = {
     product: Plant
@@ -18,6 +19,7 @@ export default function MainPart({ product }: MainPartProps) {
     const { increment } = useCartStore()
     const [scrollY, setScrollY] = useState<number>(0)
     const [addSuccessful, setAddSuccessful] = useState<boolean>(false)
+    const { user } = useUserStore()
 
     async function handleAddToCart(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
@@ -31,6 +33,7 @@ export default function MainPart({ product }: MainPartProps) {
                         "Content-Type": "application/json",
                     },
                     body: JSON.stringify({
+                        user_id: user?.id,
                         plant_id: product.id,
                         quantity: value
                     })

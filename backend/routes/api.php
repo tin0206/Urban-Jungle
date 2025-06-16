@@ -41,9 +41,9 @@ Route::get('/plants/{plant_name}', [\App\Http\Controllers\PlantController::class
 Route::get('/plants/{plant_name}/related', [\App\Http\Controllers\PlantController::class, 'apiRelated']);
 
 // API route for shopping carts
-Route::get('/shopping_cart/items', [ShoppingCartController::class, 'apiIndex']);
+Route::middleware('auth:sanctum')->get('/shopping_cart/items', [ShoppingCartController::class, 'apiIndex']);
 
-Route::get('/shopping_cart/quantity', [ShoppingCartController::class, 'getQuantity']);
+Route::middleware('auth:sanctum')->get('/shopping_cart/quantity', [ShoppingCartController::class, 'getQuantity']);
 
 Route::post('/shopping_cart/addItem', [ShoppingCartController::class, 'store']);
 

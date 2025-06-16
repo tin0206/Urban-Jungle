@@ -6,6 +6,8 @@ import { CountrySelect } from 'react-country-state-city'
 import 'react-country-state-city/dist/react-country-state-city.css'
 import { CartItem } from "@/app/model"
 import { Button } from "../ui/button"
+import useUserStore from "@/stores/useUserStore"
+import { useCartStore } from "@/stores/useCartStore"
 
 export default function CheckoutDisplay() {
   const [couponClick, setCouponClick] = useState(false)
@@ -13,13 +15,17 @@ export default function CheckoutDisplay() {
   const [cartItems, setCartItems] = useState<CartItem[]>([])
   const [subTotal, setSubtotal] = useState<number[]>([])
   const [totalPrice, setTotalPrice] = useState<number>(0)
+  const { user } = useUserStore()
+  const { click, increment } = useCartStore()
 
   useEffect(() => {
     const fetchCartItems = async () => {
+      const authToken = localStorage.getItem("auth_token")
       await fetch("http://localhost:8000/api/shopping_cart/items", {
         method: "GET",
         headers: {
-        "Content-Type": "application/json",
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${authToken}`,
         },
       })
       .then((response) => response.json())
@@ -36,7 +42,7 @@ export default function CheckoutDisplay() {
     }
 
     fetchCartItems()
-  }, [])
+  }, [click, user])
 
   return (
     <div className="w-full">

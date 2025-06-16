@@ -7,6 +7,7 @@ import { LuShoppingCart } from "react-icons/lu"
 import { Button } from "../ui/button"
 import Link from "next/link"
 import { TiTick } from "react-icons/ti"
+import useUserStore from "@/stores/useUserStore"
 
 export default function CartDisplay() {
     const [cartItems, setCartItems] = useState<CartItem[]>([])
@@ -19,13 +20,16 @@ export default function CartDisplay() {
     const [isLoading, setIsLoading] = useState(false)
     const [tempDeleteItem, setTempDeleteItem] = useState<TempDeleteCartItem | null>(null)
     const [deleteSuccess, setDeleteSuccess] = useState(false)
+    const { user } = useUserStore()
 
     useEffect(() => {
         const fetchCartItems = async () => {
+            const authToken = localStorage.getItem("auth_token")
             await fetch("http://localhost:8000/api/shopping_cart/items", {
                 method: "GET",
                 headers: {
-                "Content-Type": "application/json",
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${authToken}`,
                 },
             })
             .then((response) => response.json())
@@ -42,7 +46,7 @@ export default function CartDisplay() {
         }
 
         fetchCartItems()
-    }, [click])
+    }, [click, user])
 
     useEffect(() => {
         const subTotal = cartItems.map((item, index) => item.price * quantity[index])
@@ -129,7 +133,8 @@ export default function CartDisplay() {
                     },
                     body: JSON.stringify({
                         plant_id: tempDeleteItem.plant_id,
-                        quantity: tempDeleteItem.quantity
+                        quantity: tempDeleteItem.quantity,
+                        user_id: user?.id
                     })
                 })
                 .then((response) => {
