@@ -111,7 +111,7 @@ export default function ProductList() {
                             </li>
                         ))}
                         {
-                            displayList.length !== 0 && (
+                            displayList.length !== 0 && products.length > offSet && (
                                 <>
                                     <div
                                         className="absolute size-8 border rounded-full bg-[rgb(136,173,53)] hover:bg-[#698927] top-1/2 left-0 flex items-center justify-center cursor-pointer"

@@ -5,12 +5,12 @@ import { usePathname } from "next/navigation"
 import { useEffect } from "react"
 import ShoppingCartSidebar from "./ShoppingCartSidebar"
 import { useLoginModal } from "@/stores/useLoginModal"
-import LoginModal from "./LoginModal"
+import LoginModal from "./login/LoginModal"
 
 export function ClientLayout({children}: {children: React.ReactNode}) {
     const pathname = usePathname()
     const { showShoppingCart, setShowShoppingCart } = useShoppingCart()
-    const { showLoginModal, setShowLoginModal } = useLoginModal()
+    const { showLoginModal } = useLoginModal()
 
     useEffect(() => {
         if (showShoppingCart) {

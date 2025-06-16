@@ -10,10 +10,12 @@ import useMobileMenu from "@/stores/useMobileMenu"
 import useShoppingCart from "@/stores/useShoppingCart"
 import Link from 'next/link'
 import ShoppingCart from "./ShoppingCart"
-import Profile from "./Profile"
+import Profile from "./login/Profile"
+import useLogOut from "@/stores/useLogOut"
 
 export const NavBar = () => {
     const { showMobileMenu, setShowMobileMenu } = useMobileMenu()
+    const { setShowLogOut } = useLogOut()
     const [showMainMenu, setShowMainMenu] = useState(false)
     const { setShowShoppingCart } = useShoppingCart()
     const path = usePathname()
@@ -46,7 +48,13 @@ export const NavBar = () => {
     return (
         <div className="w-full h-[70px] md:h-20">
             <div className="px-5 flex items-center md:justify-center justify-between h-full 2xl:mx-[332.500px]">
-                <div className="h-full flex items-center">
+                <div 
+                    className="h-full flex items-center"
+                    onClick={() => {
+                        setShowMobileMenu(false)
+                        setShowLogOut(false)
+                    }}
+                >
                     <Link className="pr-4 cursor-pointer"
                         href="/"
                     >
@@ -60,7 +68,12 @@ export const NavBar = () => {
                     </Link>
                 </div>
                 <div className="hidden md:flex items-center h-full ml-auto lg:translate-x-[-32px]">
-                    <div className="pr-2.5">
+                    <div 
+                        className="pr-2.5"
+                        onClick={() => {
+                            setShowLogOut(false)
+                        }}
+                    >
                         <ul className="flex font-navbar">
                             <Link
                                 className={`cursor-pointer ${showMainMenu ? "text-white" : ""} px-4 text-[16px] ${path === "/" ? "text-[#698927]" : ""} hover:text-[#698927]`}
@@ -88,7 +101,12 @@ export const NavBar = () => {
                             </Link>
                         </ul>
                     </div>
-                    <div className="hidden px-2.5 lg:flex items-center h-6">
+                    <div 
+                        className="hidden px-2.5 lg:flex items-center h-6"
+                        onClick={() => {
+                            setShowLogOut(false)
+                        }}
+                    >
                         <ul className="flex">
                             <li className="cursor-pointer mr-2.5">
                                 <FaFacebook className={`${showMainMenu ? "text-white" : ""} size-4 hover:text-[#698927]`} />
@@ -104,7 +122,14 @@ export const NavBar = () => {
                             </li>
                         </ul>
                     </div>
-                    <ShoppingCart showMainMenu={showMainMenu} />
+                    <div
+                        className="cursor-pointer"
+                        onClick={() => {
+                            setShowLogOut(false)
+                        }}
+                    >
+                        <ShoppingCart showMainMenu={showMainMenu} />
+                    </div>
                     <Profile showMainMenu={showMainMenu} />
                 </div>
                 <div className="flex md:hidden">

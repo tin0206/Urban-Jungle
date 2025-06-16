@@ -1,9 +1,10 @@
 "use client"
 
 import { useLoginModal } from '@/stores/useLoginModal'
-import { Button } from './ui/button'
 import { FaGoogle, FaEye, FaEyeSlash } from 'react-icons/fa'
 import { useRef, useState } from 'react'
+import useUserStore from '@/stores/useUserStore'
+import { Button } from '../ui/button'
 
 export default function LoginModal() {
     const { setShowLoginModal } = useLoginModal()
@@ -15,6 +16,7 @@ export default function LoginModal() {
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
     const [error, setError] = useState("")
     const [showError, setShowError] = useState(false)
+    const { setUser } = useUserStore()
 
     const handleSubmit = async (e: any) => {
         e.preventDefault()
@@ -39,11 +41,18 @@ export default function LoginModal() {
                 })
                 const data = await response.json()
                 if (!response.ok) {
-                    throw new Error(data.message || "Failed to sign up");
+                    setError(data.message || "Failed to sign up.")
+                    setShowError(true)
+                    return
                 }
-                setShowSignUpModal(false)
+                setUser({
+                    id: data.id,
+                    name: data.name,
+                    email: data.email,
+                    role: data.role,
+                })
+                setShowLoginModal(false)
             } catch (error) {
-                console.error("Error during sign up:", error)
                 setError("Failed to sign up. Please try again.")
                 setShowError(true)
             }
@@ -62,11 +71,18 @@ export default function LoginModal() {
                 })
                 const data = await response.json()
                 if (!response.ok) {
-                    throw new Error(data.message || "Failed to log in");
+                    setError(data.message || "Failed to log in.")
+                    setShowError(true)
+                    return
                 }
+                setUser({
+                    id: data.id,
+                    name: data.name,
+                    email: data.email,
+                    role: data.role,
+                })
                 setShowLoginModal(false)
             } catch (error) {
-                console.error("Error during login:", error)
                 setError("Failed to log in. Please try again.")
                 setShowError(true)
             }
@@ -262,7 +278,16 @@ export default function LoginModal() {
                         }
                         <div 
                             className="text-[rgb(136,173,53)] cursor-pointer hover:underline"
-                            onClick={() => setShowSignUpModal(!showSignUpModal)}
+                            onClick={() => {
+                                    setShowError(false)
+                                    username.current!.value = ""
+                                    password.current!.value = ""
+                                    if (showSignUpModal) {
+                                        confirmPassword.current!.value = ""
+                                    }
+                                    setShowSignUpModal(!showSignUpModal)
+                                }
+                            }
                         >
                             {
                                 showSignUpModal ? "Sign In" : "Sign Up"

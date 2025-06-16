@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UserCreate;
+use App\Models\ShoppingCart;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -46,11 +47,15 @@ class UserController extends Controller
                 'name' => $username,
                 'password' => Hash::make($password),
             ]);
+
             $user->save();
             return response()->json([
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'role' => $user->role,
                 'status' => 'success',
-                'message' => 'User created successfully.',
-                'user' => $user
+                'message' => 'User created successfully.'
             ], 201);
         }
     }
@@ -72,22 +77,14 @@ class UserController extends Controller
             ], 401);
         }
 
-        // $token = $user->createToken('auth_token')->plainTextToken;
-
-        // $cookie = cookie('auth_toke', $token, 60*24, null, null, true, true);
-
         return response()->json([
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'role' => $user->role,
             'status' => 'success',
             'message' => 'Login successful.',
-            'user' => $user,
         ], 200);
-
-        // return response()->json([
-        //     'status' => 'success',
-        //     'message' => 'Login successful.',
-        //     'user' => $user,
-        //     'token' => $token
-        // ], 200)->withCookie($cookie);
     }
 
     /**
