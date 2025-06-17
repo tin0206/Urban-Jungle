@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+Route::get('/user', function (Request $request) {
     return $request->user();
 });
 
@@ -25,6 +25,12 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('/signup', [UserController::class, 'store']);
 
 Route::post('/login', [UserController::class, 'login']);
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/user', [UserController::class, 'user']);
+
+    Route::post('/logout', [UserController::class, 'logout']);
+});
 
 // API route for categories
 Route::get('/categories', [CategoryController::class, 'apiIndex']);

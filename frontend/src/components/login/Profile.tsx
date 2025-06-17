@@ -17,6 +17,23 @@ export default function Profile({ showMainMenu }: ProfileProps) {
   const { showLogOut, setShowLogOut } = useLogOut()
   const { click, increment } = useCartStore()
 
+  async function handleLogout() {
+    try {
+      await fetch("http://localhost:8000/api/logout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      })
+      clearUser()
+      increment()
+      setShowLogOut(false)
+    } catch (error) {
+      console.error("Logout failed:", error)
+    }
+  }
+
   return (
     <div 
       className="ml-3"
@@ -32,12 +49,7 @@ export default function Profile({ showMainMenu }: ProfileProps) {
               showLogOut && (
                 <Button 
                   className="mt-2 font-navbar cursor-pointer absolute w-[60px] h-[35px] text-[14px] translate-x-[-20px] transition duration-300"
-                  onClick={() => {
-                    clearUser()
-                    localStorage.removeItem("auth_token")
-                    increment()
-                    setShowLogOut(false)
-                  }}
+                  onClick={handleLogout}
                 >
                   Log out
                 </Button>

@@ -6,7 +6,11 @@ use App\Http\Requests\UserCreate;
 use App\Models\ShoppingCart;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Hash;
+
+use function PHPSTORM_META\map;
 
 class UserController extends Controller
 {
@@ -32,10 +36,7 @@ class UserController extends Controller
      */
     public function store(UserCreate $request)
     {
-        //
-        $username = $request->input('username');
-        $password = $request->input('password');
-        $userExists = User::where('name', $username)->exists();
+        $userExists = User::where('name',  $request->input('name'))->exists();
         if ($userExists) {
             return response()->json([
                 'status' => 'error',
@@ -44,18 +45,14 @@ class UserController extends Controller
         }
         else {
             $user = User::create([
-                'name' => $username,
-                'password' => Hash::make($password),
+                'name' => $request->input('name'),
+                'password' => Hash::make($request->input('password')),
             ]);
 
             $user->save();
             return response()->json([
-                'id' => $user->id,
-                'name' => $user->name,
-                'email' => $user->email,
-                'role' => $user->role,
+                'user' => $user,
                 'status' => 'success',
-                'message' => 'User created successfully.'
             ], 201);
         }
     }
@@ -65,29 +62,52 @@ class UserController extends Controller
      */
     public function login(Request $request)
     {
-        $username = $request->input('username');
-        $password = $request->input('password');
-
-        $user = User::where('name', $username)->first();
-
-        if (!$user || !Hash::check($password, $user->password)) {
-            return response()->json([
+        if (!Auth::attempt($request->only('name', 'password'))) {
+            return response([
                 'status' => 'error',
                 'message' => 'Invalid username or password.'
             ], 401);
         }
 
+        /**
+         * @var mixed
+         */
+        $user = Auth::user();
+
+
         $token = $user->createToken('auth_token')->plainTextToken;
 
+        $cookie = cookie(
+            'jwt_token',
+            $token,
+            60*24
+        );
+
         return response()->json([
-            'id' => $user->id,
-            'name' => $user->name,
-            'email' => $user->email,
-            'role' => $user->role,
+            'user' => $user,
             'status' => 'success',
-            'message' => 'Login successful.',
-            'token' => $token
-        ], 200);
+        ], 200)->withCookie($cookie);
+    }
+
+    /**
+     * Logout a user.
+     */
+    public function logout(Request $request)
+    {
+        $request->user()->currentAccessToken()->delete();
+
+        $cookie = Cookie::forget('jwt_token');
+
+        return response()->json([
+            'status' => 'success',
+        ], 200)->withCookie($cookie);
+    }
+
+    /**
+     * Display the authenticated user.
+     */
+    public function user() {
+        return Auth::user();
     }
 
     /**

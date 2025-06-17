@@ -2,16 +2,16 @@
 
 import { useLoginModal } from '@/stores/useLoginModal'
 import { FaGoogle, FaEye, FaEyeSlash } from 'react-icons/fa'
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import useUserStore from '@/stores/useUserStore'
 import { Button } from '../ui/button'
 
 export default function LoginModal() {
     const { setShowLoginModal } = useLoginModal()
     const [showSignUpModal, setShowSignUpModal] = useState(false)
-    let username = useRef<HTMLInputElement>(null)
-    let password = useRef<HTMLInputElement>(null)
-    let confirmPassword = useRef<HTMLInputElement>(null)
+    const [ name, setName ] = useState("")
+    const [ password, setPassword ] = useState("")
+    const [ confirmPassword, setConfirmPassword ] = useState("")
     const [showPassword, setShowPassword] = useState(false)
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
     const [error, setError] = useState("")
@@ -24,9 +24,6 @@ export default function LoginModal() {
             return
         }
 
-        const usernameValue = username.current?.value
-        const passwordValue = password.current?.value
-
         if (showSignUpModal) {
             try {
                 const response = await fetch("http://localhost:8000/api/signup", {
@@ -35,8 +32,8 @@ export default function LoginModal() {
                         "Content-Type": "application/json"
                     },
                     body: JSON.stringify({
-                        username: usernameValue,
-                        password: passwordValue
+                        name,
+                        password
                     })
                 })
                 const data = await response.json()
@@ -46,10 +43,10 @@ export default function LoginModal() {
                     return
                 }
                 setUser({
-                    id: data.id,
-                    name: data.name,
-                    email: data.email,
-                    role: data.role,
+                    id: data.user?.id,
+                    name: data.user?.name,
+                    email: data.user?.email,
+                    role: data.user?.role,
                 })
                 setShowLoginModal(false)
             } catch (error) {
@@ -64,9 +61,10 @@ export default function LoginModal() {
                     headers: {
                         "Content-Type": "application/json"
                     },
+                    credentials: "include",
                     body: JSON.stringify({
-                        username: usernameValue,
-                        password: passwordValue
+                        name,
+                        password
                     })
                 })
                 const data = await response.json()
@@ -76,10 +74,10 @@ export default function LoginModal() {
                     return
                 }
                 setUser({
-                    id: data.id,
-                    name: data.name,
-                    email: data.email,
-                    role: data.role,
+                    id: data.user?.id,
+                    name: data.user?.name,
+                    email: data.user?.email,
+                    role: data.user?.role,
                 })
                 localStorage.setItem("auth_token", data.token)
                 setShowLoginModal(false)
@@ -91,15 +89,14 @@ export default function LoginModal() {
     }
 
     const checkUserNameValidation = () => {
-        const usernameValue = username.current?.value || ""
         let messageLog = ""
-        if (usernameValue.length === 0) {
+        if (name.length === 0) {
             messageLog = "Username cannot be empty.\n"
         }
-        if (usernameValue.includes(" ")) {
+        if (name.includes(" ")) {
             messageLog += "Username cannot contain spaces.\n"
         }
-        if (usernameValue.length > 20) {
+        if (name.length > 20) {
             messageLog += "Username cannot be longer than 20 characters.\n"
         }
 
@@ -112,15 +109,14 @@ export default function LoginModal() {
     }
 
     const checkPassWordValidation = () => {
-        const passwordValue = password.current?.value || "";
         let messageLog = ""
-        if (passwordValue.length === 0) {
+        if (password.length === 0) {
             messageLog = "Password cannot be empty.\n"
         }
-        if (passwordValue.includes(" ")) {
+        if (password.includes(" ")) {
             messageLog += "Password cannot contain spaces.\n"
         }
-        if (passwordValue.length > 20) {
+        if (password.length > 20) {
             messageLog += "Password cannot be longer than 20 characters.\n"
         }
 
@@ -135,10 +131,8 @@ export default function LoginModal() {
     const checkConfirmPasswordValidation = () => {
         if (!showSignUpModal) return true;
         
-        const passwordValue = password.current?.value || ""
-        const confirmPasswordValue = confirmPassword.current?.value || ""
         let messageLog = ""
-        if (confirmPasswordValue !== passwordValue) {
+        if (confirmPassword !== password) {
             messageLog += "Confirm Password does not match Password.\n"
         }
 
@@ -197,7 +191,7 @@ export default function LoginModal() {
                                 type="text"
                                 className="w-11/12 h-[30px] px-3 py-1.5 border text-[13px] border-[rgb(221,221,221)] rounded-[6px] focus:outline-none focus:border-[rgb(136,173,53)]"
                                 placeholder="Enter your username"
-                                ref={username}
+                                onChange={(e) => setName(e.target.value)}
                             />
                             <div className="font-navbar text-[14.4px] leading-[28.8px] font-medium mt-1">
                                 Password
@@ -207,7 +201,7 @@ export default function LoginModal() {
                                     type={showPassword ? "text" : "password"}
                                     className="w-11/12 h-[30px] px-3 py-1.5 border text-[13px] border-[rgb(221,221,221)] rounded-[6px] focus:outline-none focus:border-[rgb(136,173,53)]"
                                     placeholder="Enter your password"
-                                    ref={password}
+                                    onChange={(e) => setPassword(e.target.value)}
                                 />
                                 {
                                     showPassword ? (
@@ -234,7 +228,7 @@ export default function LoginModal() {
                                                 type={showConfirmPassword ? "text" : "password"}
                                                 className="w-full h-[30px] px-3 py-1.5 border text-[13px] border-[rgb(221,221,221)] rounded-[6px] focus:outline-none focus:border-[rgb(136,173,53)]"
                                                 placeholder="Confirm your password"
-                                                ref={confirmPassword}
+                                                onChange={(e) => setConfirmPassword(e.target.value)}
                                             />
                                             {
                                                 showConfirmPassword ? (
@@ -281,10 +275,10 @@ export default function LoginModal() {
                             className="text-[rgb(136,173,53)] cursor-pointer hover:underline"
                             onClick={() => {
                                     setShowError(false)
-                                    username.current!.value = ""
-                                    password.current!.value = ""
+                                    setName("")
+                                    setPassword("")
                                     if (showSignUpModal) {
-                                        confirmPassword.current!.value = ""
+                                        setConfirmPassword("")
                                     }
                                     setShowSignUpModal(!showSignUpModal)
                                 }
