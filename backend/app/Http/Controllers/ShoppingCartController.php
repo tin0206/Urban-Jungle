@@ -23,7 +23,7 @@ class ShoppingCartController extends Controller
     public function apiIndex()
     {
         /** @var User $user */
-        $user = Auth::user();
+        $user = Auth::guard('api')->user();
         if (!$user) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
@@ -44,10 +44,10 @@ class ShoppingCartController extends Controller
     /**
      * Get the total quantity of items in the shopping cart.
      */
-    public function getQuantity()
+    public function getQuantity(Request $request)
     {
         /** @var User $user */
-        $user = Auth::user();
+        $user = Auth::guard('api')->user();
         if (!$user) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
@@ -69,6 +69,12 @@ class ShoppingCartController extends Controller
      */
     public function store(Request $request)
     {
+        /** @var User $user */
+        $user = Auth::guard('api')->user();
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
         $validated = $request->validate([
             'plant_id' => 'required|integer|exists:plants,id',
             'quantity' => 'nullable|integer|min:1',
@@ -125,6 +131,12 @@ class ShoppingCartController extends Controller
      */
     public function update(Request $request, ShoppingCart $shoppingCart)
     {
+        /** @var User $user */
+        $user = Auth::guard('api')->user();
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
         $validated = $request->validate([
             'items' => 'required|array',
             'items.*.id' => 'required|integer|exists:shopping_carts,id',
@@ -157,7 +169,12 @@ class ShoppingCartController extends Controller
      */
     public function removeItem(Request $request)
     {
-        //
+        /** @var User $user */
+        $user = Auth::guard('api')->user();
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
         $validated = $request->validate([
             'item_id' => 'required|integer|exists:shopping_carts,id',
         ]);

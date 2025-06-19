@@ -7,7 +7,7 @@ import { useCartStore } from "@/stores/useCartStore"
 import Link from "next/link"
 import useShoppingCart from "@/stores/useShoppingCart"
 import useUserStore from "@/stores/useUserStore"
-import useLogOut from "@/stores/useLogOut"
+import useLocalStorageCart from "@/stores/useLocalStorageCart"
 
 export default function CartItemList() {
   const [cartItems, setCartItems] = useState<CartItem[]>([])
@@ -17,32 +17,63 @@ export default function CartItemList() {
   const { click, increment } = useCartStore()
   const { user } = useUserStore()
   const { setShowShoppingCart } = useShoppingCart()
+  const { cart, deleteItems } = useLocalStorageCart()
 
+  const findQuantity = (id: number) => {
+    const quantity = cart.find((item: CartItem) => item.id === id)?.quantity
+    return quantity
+  }
 
   useEffect(() => {
     const fetchCartItems = async () => {
-      const authToken = localStorage.getItem("auth_token")
-      await fetch("http://localhost:8000/api/shopping_cart/items", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${authToken}`,
-        },
-      })
-      .then((response) => response.json())
-      .then((data) => {
-        setCartItems(data)
-        const totalMount = data.reduce((acc: number, item: CartItem) => acc + item.price * item.quantity, 0)
-        setSubtotal(totalMount)
-      })
-      .catch((error) => {
-        console.error("Error fetching cart items:", error)
-      })
+      if (user === null) {
+        const plants_ids = cart.map((item: CartItem) => item.id)
+        await fetch("http://localhost:8000/api/plants/localStorage", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ plants_id: plants_ids }),
+        })
+        .then((response) => response.json())
+        .then((data) => {
+          setCartItems(data.plants)
+          const totalMount = data.plants.reduce((acc: number, item: CartItem) => {
+            const quantity = cart.find((cartItem: CartItem) => cartItem.id === item.id)?.quantity
+            return acc + (item.price * (quantity || 0))
+          }, 0)
+          setSubtotal(totalMount)
+          if (data.removed_plants.length > 0) {
+            deleteItems(data.plants_removed)
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching plants from localStorage:", error)
+        })
+      }
+      else {
+        await fetch("http://localhost:8000/api/shopping_cart/items", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem("jwt_token")}`,
+          },
+        })
+        .then((response) => response.json())
+        .then((data) => {
+          setCartItems(data)
+          const totalMount = data.reduce((acc: number, item: CartItem) => acc + item.price * item.quantity, 0)
+          setSubtotal(totalMount)
+        })
+        .catch((error) => {
+          console.error("Error fetching cart items:", error)
+        })
+      }
     }
     setIsLoading(true)
     fetchCartItems()
     setIsLoading(false)
-  }, [click, user])
+  }, [click, user, cart])
 
   async function handleRemoveItem(itemId: number) {
     setIsLoading(true)
@@ -51,6 +82,7 @@ export default function CartItemList() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("jwt_token")}`,
         },
         body: JSON.stringify({ item_id: itemId }),
       })
@@ -113,7 +145,7 @@ export default function CartItemList() {
                         </Button>
                       </div>
                       <div className="text-[16px] font-navbar text-[rgb(69,69,69)] leading-[24px]">
-                        {item.quantity} x ${item.price.toFixed(2)}
+                        {user !== null ? item.quantity : findQuantity(item.id)} x ${item.price.toFixed(2)}
                       </div>
                     </div>
                     {showLoading === id && isLoading && (

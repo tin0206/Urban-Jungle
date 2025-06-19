@@ -19,11 +19,17 @@ export type CartItem = {
     plant_name: string;
     quantity: number;
     price: number;
-    user_id: string;
 }
 
 export type TempDeleteCartItem = {
     plant_id: number;
     plant_name: string;
     quantity: number;
+}
+
+export type User = {
+    id: number;
+    name: string;
+    email: string;
+    role: string;
 }

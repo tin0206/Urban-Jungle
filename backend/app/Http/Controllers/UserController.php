@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Hash;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 use function PHPSTORM_META\map;
 
@@ -62,31 +63,29 @@ class UserController extends Controller
      */
     public function login(Request $request)
     {
-        if (!Auth::attempt($request->only('name', 'password'))) {
-            return response([
+        $credentials = $request->only('name', 'password');
+
+        if (!$token = JWTAuth::attempt($credentials)) {
+            return response()->json([
                 'status' => 'error',
-                'message' => 'Invalid username or password.'
+                'message' => 'Invalid credentials'
             ], 401);
         }
-
-        /**
-         * @var mixed
-         */
-        $user = Auth::user();
-
-
-        $token = $user->createToken('auth_token')->plainTextToken;
 
         $cookie = cookie(
             'jwt_token',
             $token,
-            60*24
+            60 * 24,
+            null,
+            null,
+            false,
+            true
         );
 
         return response()->json([
-            'user' => $user,
-            'status' => 'success',
-        ], 200)->withCookie($cookie);
+            'user' => Auth::user(),
+            'token' => $token,
+        ])->withCookie($cookie);
     }
 
     /**
@@ -94,8 +93,6 @@ class UserController extends Controller
      */
     public function logout(Request $request)
     {
-        $request->user()->currentAccessToken()->delete();
-
         $cookie = Cookie::forget('jwt_token');
 
         return response()->json([

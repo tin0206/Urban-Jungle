@@ -8,6 +8,8 @@ use App\Models\Plant;
 use Illuminate\Http\Request;
 use PhpParser\Node\Expr\AssignOp\Plus;
 
+use function PHPSTORM_META\map;
+
 class PlantController extends Controller
 {
     /**
@@ -56,6 +58,38 @@ class PlantController extends Controller
         });
 
         return response()->json($plants);
+    }
+
+    /**
+     * Display a listing of plants for local storage.
+     */
+    public function apiLocalStorage(Request $request) {
+        $plantsId = collect($request->input('plants_id'));
+
+        $removedPlants = $plantsId->filter(function ($id) {
+            if (Plant::where('id', $id)->exists()) {
+                return false;
+            }
+            return true;
+        });
+
+        $plants = $plantsId->filter(function ($id) {
+            return Plant::where('id', $id)->exists();
+        })->map(function ($id) {
+            $plant = Plant::find($id);
+            return [
+                'id' => $plant->id,
+                'plant_name' => $plant->name,
+                'category_name' => $plant->category->name,
+                'description' => $plant->description,
+                'price' => $plant->price
+            ];
+        });
+
+        return response()->json([
+            'plants' => $plants,
+            'removed_plants' => $removedPlants,
+        ]);
     }
 
     /**

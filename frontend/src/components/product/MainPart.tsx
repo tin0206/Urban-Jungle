@@ -1,12 +1,13 @@
 "use client"
 
-import { Plant } from "@/app/model"
+import { CartItem, Plant } from "@/app/model"
 import { Button } from "../ui/button"
 import { useEffect, useRef, useState } from "react"
 import { useCartStore } from "@/stores/useCartStore"
 import { TiTick } from "react-icons/ti"
 import Link from "next/link"
 import useUserStore from "@/stores/useUserStore"
+import useLocalStorageCart from "@/stores/useLocalStorageCart"
 
 type MainPartProps = {
     product: Plant
@@ -20,33 +21,45 @@ export default function MainPart({ product }: MainPartProps) {
     const [scrollY, setScrollY] = useState<number>(0)
     const [addSuccessful, setAddSuccessful] = useState<boolean>(false)
     const { user } = useUserStore()
+    const { addItem } = useLocalStorageCart()
 
     async function handleAddToCart(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
         setAddingToCart(true)
         const value = inputRef.current?.value
         if (value) {
-            try {
-                await fetch("http://localhost:8000/api/shopping_cart/addItem", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        user_id: user?.id,
-                        plant_id: product.id,
-                        quantity: value
-                    })
-                })
-                .then(res => {
-                    if (res.status === 200 || res.status === 201) {
-                        setAddSuccessful(true)
-                    }
-                })
-                increment()
-            } catch (error) {
-                console.error("Error adding to cart:", error)
+            if (user === null) {
+                let item : any = {
+                    id: product.id,
+                    quantity: value,
+                }
+                addItem(item as CartItem)
             }
+            else {
+                try {
+                    await fetch("http://localhost:8000/api/shopping_cart/addItem", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${localStorage.getItem("jwt_token")}`,
+                        },
+                        body: JSON.stringify({
+                            user_id: user?.id,
+                            plant_id: product.id,
+                            quantity: value
+                        })
+                    })
+                    .then(res => {
+                        if (res.status === 200 || res.status === 201) {
+                            setAddSuccessful(true)
+                        }
+                    })
+                    increment()
+                } catch (error) {
+                    console.error("Error adding to cart:", error)
+                }
+            }
+
             setTimeout(() => {
                 setAddingToCart(false)
                 inputRef.current!.value = "1"

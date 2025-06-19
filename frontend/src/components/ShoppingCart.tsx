@@ -1,6 +1,7 @@
 "use client"
 
 import { useCartStore } from "@/stores/useCartStore";
+import useLocalStorageCart from "@/stores/useLocalStorageCart";
 import useShoppingCart from "@/stores/useShoppingCart";
 import useUserStore from "@/stores/useUserStore";
 import { usePathname } from "next/navigation";
@@ -17,24 +18,33 @@ export default function ShoppingCart({ showMainMenu }: ShoppingCartProps) {
     const { click } = useCartStore()
     const path = usePathname()
     const { user } = useUserStore()
+    const { cart } = useLocalStorageCart()
 
     useEffect(() => {
-        const authToken = localStorage.getItem("auth_token")
-        fetch("http://localhost:8000/api/shopping_cart/quantity", {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${authToken}`,
-            },
-        })
-        .then((response) => response.json())
-        .then((data) => {
-            setQuantity(data.total_quantity)
-        })
-        .catch((error) => {
-            console.error("Error fetching cart items:", error)
-        })
-    }, [click, user])
+        const fetchCartQuantity = async () => {
+            if (user === null) {
+                setQuantity(cart.length)
+            }
+            else {
+                fetch("http://localhost:8000/api/shopping_cart/quantity", {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${localStorage.getItem("jwt_token")}`,
+                    },
+                })
+                .then((response) => response.json())
+                .then((data) => {
+                    setQuantity(data.total_quantity)
+                })
+                .catch((error) => {
+                    console.error("Error fetching cart items:", error)
+                })
+            }
+        }
+
+        fetchCartQuantity()
+    }, [click, user, cart]);
 
     return (
         <div

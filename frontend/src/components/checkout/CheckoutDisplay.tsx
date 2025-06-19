@@ -8,6 +8,7 @@ import { CartItem } from "@/app/model"
 import { Button } from "../ui/button"
 import useUserStore from "@/stores/useUserStore"
 import { useCartStore } from "@/stores/useCartStore"
+import useLocalStorageCart from "@/stores/useLocalStorageCart"
 
 export default function CheckoutDisplay() {
   const [couponClick, setCouponClick] = useState(false)
@@ -17,28 +18,59 @@ export default function CheckoutDisplay() {
   const [totalPrice, setTotalPrice] = useState<number>(0)
   const { user } = useUserStore()
   const { click, increment } = useCartStore()
+  const { cart, deleteItems } = useLocalStorageCart()
+
+  const findQuantity = (id: number) => {
+    const quantity = cart.find((item: CartItem) => item.id === id)?.quantity
+    return quantity
+  }
 
   useEffect(() => {
     const fetchCartItems = async () => {
-      const authToken = localStorage.getItem("auth_token")
-      await fetch("http://localhost:8000/api/shopping_cart/items", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${authToken}`,
-        },
-      })
-      .then((response) => response.json())
-      .then((data) => {
-        setCartItems(data)
-        const prices = data.map((item: CartItem) => item.price * item.quantity)
-        setSubtotal(prices)
-        const total = prices.reduce((acc: number, price: number) => acc + price, 0)
-        setTotalPrice(total)
-      }) 
-      .catch((error) => {
-        console.error("Error fetching cart items:", error)
-      })
+      if (user === null) {
+        const plants_ids = cart.map((item: CartItem) => item.id)
+        await fetch("http://localhost:8000/api/plants/localStorage", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ plants_id: plants_ids }),
+        })
+        .then((response) => response.json())
+        .then((data) => {
+          setCartItems(data.plants)
+          const prices = data.plants.map((item: CartItem) => item.price * (cart.find(cartItem => cartItem.id === item.id)?.quantity || 0))
+          setSubtotal(prices)
+          const total = prices.reduce((acc: number, price: number) => acc + price, 0)
+          setTotalPrice(total)
+          if (data.removed_plants.length > 0) {
+            deleteItems(data.removed_plants)
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching plants from localStorage:", error)
+        })
+      }
+      else {
+        await fetch("http://localhost:8000/api/shopping_cart/items", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem("jwt_token")}`,
+          },
+        })
+        .then((response) => response.json())
+        .then((data) => {
+          setCartItems(data)
+          const prices = data.map((item: CartItem) => item.price * item.quantity)
+          setSubtotal(prices)
+          const total = prices.reduce((acc: number, price: number) => acc + price, 0)
+          setTotalPrice(total)
+        }) 
+        .catch((error) => {
+          console.error("Error fetching cart items:", error)
+        })
+      }
     }
 
     fetchCartItems()
@@ -226,7 +258,7 @@ export default function CheckoutDisplay() {
                   cartItems.map((item: CartItem, index) => (
                     <li key={index} className="w-full py-2.5 border-b text-[14.592px] md:text-[16px] leading-[21.888px] md:leading-[24px] text-[rgb(69,69,69)] font-navbar flex items-center justify-between">
                       <div>
-                        {item.plant_name} x {item.quantity}
+                        {item.plant_name} x {user !== null ? item.quantity : findQuantity(item.id)}
                       </div>
                       <div>
                         ${subTotal[index].toFixed(2)}

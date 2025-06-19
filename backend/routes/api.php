@@ -26,7 +26,7 @@ Route::post('/signup', [UserController::class, 'store']);
 
 Route::post('/login', [UserController::class, 'login']);
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware('auth:api')->group(function () {
     Route::get('/user', [UserController::class, 'user']);
 
     Route::post('/logout', [UserController::class, 'logout']);
@@ -40,6 +40,8 @@ Route::get('/categories/{category_name}', [CategoryController::class, 'apiIndex'
 // API route for plants
 Route::get('/plants', [\App\Http\Controllers\PlantController::class, 'apiIndex']);
 
+Route::post('/plants/localStorage', [\App\Http\Controllers\PlantController::class, 'apiLocalStorage']);
+
 Route::get('/plants/new-products', [\App\Http\Controllers\PlantController::class, 'apiNewProducts']);
 
 Route::get('/plants/{plant_name}', [\App\Http\Controllers\PlantController::class, 'apiIndex']);
@@ -47,12 +49,17 @@ Route::get('/plants/{plant_name}', [\App\Http\Controllers\PlantController::class
 Route::get('/plants/{plant_name}/related', [\App\Http\Controllers\PlantController::class, 'apiRelated']);
 
 // API route for shopping carts
-Route::middleware('auth:sanctum')->get('/shopping_cart/items', [ShoppingCartController::class, 'apiIndex']);
+Route::middleware('auth:api')->group(function () {
+    Route::get('/shopping_cart/items', [ShoppingCartController::class, 'apiIndex']);
 
-Route::middleware('auth:sanctum')->get('/shopping_cart/quantity', [ShoppingCartController::class, 'getQuantity']);
+    Route::get('/shopping_cart/quantity', [ShoppingCartController::class, 'getQuantity']);
 
-Route::post('/shopping_cart/addItem', [ShoppingCartController::class, 'store']);
+    Route::post('/shopping_cart/addItem', [ShoppingCartController::class, 'store']);
 
-Route::post('/shopping_cart/updateCart', [ShoppingCartController::class, 'update']);
+    Route::post('/shopping_cart/updateCart', [ShoppingCartController::class, 'update']);
 
-Route::post('/shopping_cart/removeItem', [ShoppingCartController::class, 'removeItem']);
+    Route::post('/shopping_cart/removeItem', [ShoppingCartController::class, 'removeItem']);
+});
+
+
+

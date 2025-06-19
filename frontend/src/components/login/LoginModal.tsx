@@ -79,7 +79,13 @@ export default function LoginModal() {
                     email: data.user?.email,
                     role: data.user?.role,
                 })
-                localStorage.setItem("auth_token", data.token)
+                if (localStorage.getItem("jwt_token")) {
+                    localStorage.removeItem("jwt_token")
+                    localStorage.setItem("jwt_token", data.token)
+                }
+                else {
+                    localStorage.setItem("jwt_token", data.token)
+                }
                 setShowLoginModal(false)
             } catch (error) {
                 setError("Failed to log in. Please try again.")

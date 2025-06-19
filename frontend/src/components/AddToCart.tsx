@@ -1,6 +1,8 @@
 "use client"
 
+import { CartItem } from "@/app/model"
 import { useCartStore } from "@/stores/useCartStore"
+import useLocalStorageCart from "@/stores/useLocalStorageCart"
 import useUserStore from "@/stores/useUserStore"
 import { useState } from "react"
 import { FaShoppingBag } from "react-icons/fa"
@@ -16,20 +18,31 @@ export default function AddToCart( { displayCart, id, plantId }: AddToCartProps)
   const [isLoading, setIsLoading] = useState(false)
   const { increment } = useCartStore()
   const { user } = useUserStore()
+  const { addItem } = useLocalStorageCart()
 
   async function addToCart(plantId: number) {
     setIsLoading(true)
-    try {
-      await fetch("http://localhost:8000/api/shopping_cart/addItem", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ plant_id: plantId, user_id: user?.id }),
-      })
-      increment()
-    } catch (error) {
-      console.error("Error adding to cart:", error)
+    if (user === null) {
+      let item : any = {
+        id: plantId,
+        quantity: 1,
+      }
+      addItem(item as CartItem)
+    }
+    else {
+      try {
+        await fetch("http://localhost:8000/api/shopping_cart/addItem", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem("jwt_token")}`,
+          },
+          body: JSON.stringify({ plant_id: plantId, user_id: user?.id }),
+        })
+        increment()
+      } catch (error) {
+        console.error("Error adding to cart:", error)
+      }
     }
     setTimeout(() => {
       setIsLoading(false)

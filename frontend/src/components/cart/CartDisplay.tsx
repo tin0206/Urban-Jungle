@@ -8,6 +8,7 @@ import { Button } from "../ui/button"
 import Link from "next/link"
 import { TiTick } from "react-icons/ti"
 import useUserStore from "@/stores/useUserStore"
+import useLocalStorageCart from "@/stores/useLocalStorageCart"
 
 export default function CartDisplay() {
     const [cartItems, setCartItems] = useState<CartItem[]>([])
@@ -21,28 +22,62 @@ export default function CartDisplay() {
     const [tempDeleteItem, setTempDeleteItem] = useState<TempDeleteCartItem | null>(null)
     const [deleteSuccess, setDeleteSuccess] = useState(false)
     const { user } = useUserStore()
+    const { cart, addItem } = useLocalStorageCart()
+
+    const findQuantity = (id: number) => {
+        const quantity = cart.find((item: CartItem) => item.id === id)?.quantity
+        return quantity
+    }
 
     useEffect(() => {
         const fetchCartItems = async () => {
-            const authToken = localStorage.getItem("auth_token")
-            await fetch("http://localhost:8000/api/shopping_cart/items", {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${authToken}`,
-                },
-            })
-            .then((response) => response.json())
-            .then((data) => {
-                setCartItems(data)
-                setQuantity(data.map((item: CartItem) => item.quantity))
-                const totalItems = data.reduce((acc: number, item: CartItem) => acc + item.quantity, 0)
-                setNumberOfItems(totalItems)
-                setTotal(data.reduce((acc: number, item: CartItem) => acc + (item.price * item.quantity), 0))
-            })
-            .catch((error) => {
-                console.error("Error fetching cart items:", error)
-            })
+            if (user === null) {
+                // setCartItems(cart)
+                // setQuantity(cart.map((item: CartItem) => item.quantity))
+                // const totalItems = cart.reduce((acc: number, item: CartItem) => acc + item.quantity, 0)
+                // setNumberOfItems(totalItems)
+                // setTotal(cart.reduce((acc: number, item: CartItem) => acc + (item.price * item.quantity), 0))
+                const plants_ids = cart.map((item: CartItem) => item.id)
+                await fetch("http://localhost:8000/api/plants/localStorage", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ plants_id: plants_ids }),
+                })
+                .then((response) => response.json())
+                .then((data) => {
+                    setCartItems(data.plants)
+                    setQuantity(cart.map((item: CartItem) => findQuantity(item.id)!))
+                    const totalMount = data.plants.reduce((acc: number, item: CartItem) => {
+                        const quantity = cart.find((cartItem: CartItem) => cartItem.id === item.id)?.quantity
+                        return acc + (item.price * (quantity || 0))
+                    }, 0)
+                    setTotal(totalMount)
+                    const totalItems = data.plants.reduce((acc: number, item: CartItem) => acc + (findQuantity(item.id)!), 0)
+                    setNumberOfItems(totalItems)
+                })
+            }
+            else {
+                await fetch("http://localhost:8000/api/shopping_cart/items", {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${localStorage.getItem("jwt_token")}`,
+                    },
+                })
+                .then((response) => response.json())
+                .then((data) => {
+                    setCartItems(data)
+                    setQuantity(data.map((item: CartItem) => item.quantity))
+                    const totalItems = data.reduce((acc: number, item: CartItem) => acc + item.quantity, 0)
+                    setNumberOfItems(totalItems)
+                    setTotal(data.reduce((acc: number, item: CartItem) => acc + (item.price * item.quantity), 0))
+                })
+                .catch((error) => {
+                    console.error("Error fetching cart items:", error)
+                })
+            }
         }
 
         fetchCartItems()
@@ -69,6 +104,7 @@ export default function CartDisplay() {
                 method: "POST",
                 headers: {
                 "Content-Type": "application/json",
+                "Authorization": `Bearer ${localStorage.getItem("jwt_token")}`,
                 },
                 body: JSON.stringify({ item_id: itemId }),
             })
@@ -108,6 +144,7 @@ export default function CartDisplay() {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
+                        "Authorization": `Bearer ${localStorage.getItem("jwt_token")}`,
                     },
                     body: JSON.stringify({ items: itemsChangeList.filter(item => item !== null) }),
                 })
@@ -125,28 +162,39 @@ export default function CartDisplay() {
     async function undoDelete() {
         setIsLoading(true)
         if (tempDeleteItem) {
-            try {
-                await fetch("http://localhost:8000/api/shopping_cart/addItem", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        plant_id: tempDeleteItem.plant_id,
-                        quantity: tempDeleteItem.quantity,
-                        user_id: user?.id
-                    })
-                })
-                .then((response) => {
-                    if (response.ok) {
-                        setDeleteSuccess(false)
-                        setTempDeleteItem(null)
-                    }
-                })
-                increment()
-            } catch (error) {
-                console.error("Error undoing delete:", error)
+            if (user === null) {
+                let item : any = {
+                    id: tempDeleteItem.plant_id,
+                    quantity: tempDeleteItem.quantity,
+                }
+                addItem(item as CartItem)
             }
+            else {
+                try {
+                    await fetch("http://localhost:8000/api/shopping_cart/addItem", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${localStorage.getItem("jwt_token")}`,
+                        },
+                        body: JSON.stringify({
+                            plant_id: tempDeleteItem.plant_id,
+                            quantity: tempDeleteItem.quantity,
+                            user_id: user?.id
+                        })
+                    })
+                    .then((response) => {
+                        if (response.ok) {
+                            setDeleteSuccess(false)
+                            setTempDeleteItem(null)
+                        }
+                    })
+                    increment()
+                } catch (error) {
+                    console.error("Error undoing delete:", error)
+                }
+            }
+
             setTimeout(() => {
                 setIsLoading(false)
             }, 1000)

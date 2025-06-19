@@ -29,6 +29,7 @@ export default function Profile({ showMainMenu }: ProfileProps) {
       clearUser()
       increment()
       setShowLogOut(false)
+      localStorage.removeItem("jwt_token")
     } catch (error) {
       console.error("Logout failed:", error)
     }
