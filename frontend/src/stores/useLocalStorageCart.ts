@@ -4,7 +4,7 @@ import { create } from "zustand";
 interface LocalStorageCartStore {
     cart: CartItem[];
     createCart: () => void;
-    updateCart: (cart: CartItem[]) => void;
+    updateItems: (cart: CartItem[]) => void;
     addItem: (item: CartItem) => void;
     deleteItems: (itemId: number[]) => void;
     removeItem: (itemId: number) => void;
@@ -60,7 +60,7 @@ const useLocalStorageCart = create<LocalStorageCartStore>((set) => ({
             return { cart: updatedCart };
     })},
 
-    updateCart: (cart: CartItem[]) => {
+    updateItems: (cart: CartItem[]) => {
         set((state) => {
             state.cart.forEach(item => {
                 const updatedItem = cart.find(cartItem => cartItem.id === item.id);

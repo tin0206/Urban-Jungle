@@ -22,7 +22,9 @@ export default function CartDisplay() {
     const [tempDeleteItem, setTempDeleteItem] = useState<TempDeleteCartItem | null>(null)
     const [deleteSuccess, setDeleteSuccess] = useState(false)
     const { user } = useUserStore()
-    const { cart, addItem } = useLocalStorageCart()
+    const { cart, addItem, updateItems, deleteItems, removeItem } = useLocalStorageCart()
+    const [tempRemoveId, setTempRemoveId] = useState<number | null>(null)
+    const [tempRemoveQuantity, setTempRemoveQuantity] = useState<number | null>(null)
 
     const findQuantity = (id: number) => {
         const quantity = cart.find((item: CartItem) => item.id === id)?.quantity
@@ -32,11 +34,6 @@ export default function CartDisplay() {
     useEffect(() => {
         const fetchCartItems = async () => {
             if (user === null) {
-                // setCartItems(cart)
-                // setQuantity(cart.map((item: CartItem) => item.quantity))
-                // const totalItems = cart.reduce((acc: number, item: CartItem) => acc + item.quantity, 0)
-                // setNumberOfItems(totalItems)
-                // setTotal(cart.reduce((acc: number, item: CartItem) => acc + (item.price * item.quantity), 0))
                 const plants_ids = cart.map((item: CartItem) => item.id)
                 await fetch("http://localhost:8000/api/plants/localStorage", {
                     method: "POST",
@@ -48,6 +45,9 @@ export default function CartDisplay() {
                 .then((response) => response.json())
                 .then((data) => {
                     setCartItems(data.plants)
+                    if (data.removed_plants.length > 0) {
+                        deleteItems(data.removed_plants)
+                    }
                     setQuantity(cart.map((item: CartItem) => findQuantity(item.id)!))
                     const totalMount = data.plants.reduce((acc: number, item: CartItem) => {
                         const quantity = cart.find((cartItem: CartItem) => cartItem.id === item.id)?.quantity
@@ -98,26 +98,37 @@ export default function CartDisplay() {
                 quantity: itemToRemove.quantity
             })
         }
-
-        try {
-            await fetch(`http://localhost:8000/api/shopping_cart/removeItem`, {
-                method: "POST",
-                headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${localStorage.getItem("jwt_token")}`,
-                },
-                body: JSON.stringify({ item_id: itemId }),
-            })
-            .then((response) => {
-                if (!response.ok) {
-                    setTempDeleteItem(null)
-                }
-                else {
-                    setDeleteSuccess(true)
-                }
-            })
-        } catch (error) {
-            console.error("Error removing item from cart:", error) 
+        
+        if (user === null) {
+            const itemToRemove = cart.find(item => item.id === itemId)
+            if (itemToRemove) {
+                setTempRemoveId(itemToRemove.id)
+                setTempRemoveQuantity(itemToRemove.quantity)
+            }
+            removeItem(itemId)
+            setDeleteSuccess(true)
+        }
+        else {
+            try {
+                await fetch(`http://localhost:8000/api/shopping_cart/removeItem`, {
+                    method: "POST",
+                    headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${localStorage.getItem("jwt_token")}`,
+                    },
+                    body: JSON.stringify({ item_id: itemId }),
+                })
+                .then((response) => {
+                    if (!response.ok) {
+                        setTempDeleteItem(null)
+                    }
+                    else {
+                        setDeleteSuccess(true)
+                    }
+                })
+            } catch (error) {
+                console.error("Error removing item from cart:", error) 
+            }
         }
 
         setTimeout(() => {
@@ -140,15 +151,21 @@ export default function CartDisplay() {
             })
 
             if (itemsChangeList.length > 0) {
-                await fetch("http://localhost:8000/api/shopping_cart/updateCart", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${localStorage.getItem("jwt_token")}`,
-                    },
-                    body: JSON.stringify({ items: itemsChangeList.filter(item => item !== null) }),
-                })
-                increment()
+                if (user === null) {
+                    updateItems(itemsChangeList.filter(item => item !== null) as CartItem[])
+                    increment()
+                }
+                else {
+                    await fetch("http://localhost:8000/api/shopping_cart/updateCart", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${localStorage.getItem("jwt_token")}`,
+                        },
+                        body: JSON.stringify({ items: itemsChangeList.filter(item => item !== null) }),
+                    })
+                    increment()
+                }
             }
         } catch (error) {
             console.error("Error updating cart:", error)
@@ -164,10 +181,15 @@ export default function CartDisplay() {
         if (tempDeleteItem) {
             if (user === null) {
                 let item : any = {
-                    id: tempDeleteItem.plant_id,
-                    quantity: tempDeleteItem.quantity,
+                    id: tempRemoveId,
+                    quantity: tempRemoveQuantity,
                 }
                 addItem(item as CartItem)
+                setTimeout(() => {
+                    setDeleteSuccess(false)
+                    setTempDeleteItem(null)
+                    increment()
+                }, 1000)
             }
             else {
                 try {
@@ -208,6 +230,30 @@ export default function CartDisplay() {
             </h1>
             <div className="w-full">
                 {
+                    deleteSuccess && tempDeleteItem && !isLoading && (
+                        <div className="w-full bg-[rgb(247,246,247)] border-t-[3px] border-t-[rgb(136,173,53)] py-[14.592px] md:py-4 px-[29.184px] md:px-8 mb-[29.184px] md:mb-8">
+                            <div className="flex items-center gap-2">
+                                <div className="w-[33px] h-[20px] pr-[8px]">
+                                    <div className="w-[20px] h-full flex items-center justify-center border-foreground bg-[rgb(136,173,53)] rounded-full">
+                                        <TiTick className="size-[20px] text-white" />
+                                    </div>
+                                </div>
+                                <div className="pl-[5px] flex gap-x-1">
+                                    <div className="font-navbar text-[14.592px] md:text-[16px] leading-[21.888px] md:leading-[24px] text-[rgb(69,69,69)]">
+                                        "{tempDeleteItem?.plant_name}" removed. 
+                                    </div>
+                                    <div 
+                                        className="font-navbar text-[14.592px] md:text-[16px] leading-[21.888px] md:leading-[24px] text-[rgb(136,173,53)] hover:text-[rgb(105,137,39)] cursor-pointer hover:underline"
+                                        onClick={undoDelete}
+                                    >
+                                        Undo?
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )
+                }
+                {
                     cartItems.length === 0 ? (
                         <div className="w-full bg-[rgb(247,246,247)] border-t-[3px] border-t-[rgb(136,173,53)] py-[14.592px] md:py-4 px-[29.184px] md:px-8 mb-[29.184px] md:mb-8">
                             <div className="flex items-center gap-4">
@@ -219,30 +265,6 @@ export default function CartDisplay() {
                         </div>
                     ) : (
                         <>
-                            {
-                                deleteSuccess && !isLoading && (
-                                    <div className="w-full bg-[rgb(247,246,247)] border-t-[3px] border-t-[rgb(136,173,53)] py-[14.592px] md:py-4 px-[29.184px] md:px-8 mb-[29.184px] md:mb-8">
-                                        <div className="flex items-center gap-2">
-                                            <div className="w-[33px] h-[20px] pr-[8px]">
-                                                <div className="w-[20px] h-full flex items-center justify-center border-foreground bg-[rgb(136,173,53)] rounded-full">
-                                                    <TiTick className="size-[20px] text-white" />
-                                                </div>
-                                            </div>
-                                            <div className="pl-[5px] flex gap-x-1">
-                                                <div className="font-navbar text-[14.592px] md:text-[16px] leading-[21.888px] md:leading-[24px] text-[rgb(69,69,69)]">
-                                                    "{tempDeleteItem?.plant_name}" removed. 
-                                                </div>
-                                                <div 
-                                                    className="font-navbar text-[14.592px] md:text-[16px] leading-[21.888px] md:leading-[24px] text-[rgb(136,173,53)] hover:text-[rgb(105,137,39)] cursor-pointer hover:underline"
-                                                    onClick={undoDelete}
-                                                >
-                                                    Undo?
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                )
-                            }
                             <div className="relative">
                                 <table className="w-full border">
                                     <thead>

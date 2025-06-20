@@ -39,13 +39,13 @@ export default function CheckoutDisplay() {
         .then((response) => response.json())
         .then((data) => {
           setCartItems(data.plants)
+          if (data.removed_plants.length > 0) {
+            deleteItems(data.removed_plants)
+          }
           const prices = data.plants.map((item: CartItem) => item.price * (cart.find(cartItem => cartItem.id === item.id)?.quantity || 0))
           setSubtotal(prices)
           const total = prices.reduce((acc: number, price: number) => acc + price, 0)
           setTotalPrice(total)
-          if (data.removed_plants.length > 0) {
-            deleteItems(data.removed_plants)
-          }
         })
         .catch((error) => {
           console.error("Error fetching plants from localStorage:", error)

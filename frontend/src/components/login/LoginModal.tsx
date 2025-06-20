@@ -48,7 +48,7 @@ export default function LoginModal() {
                     email: data.user?.email,
                     role: data.user?.role,
                 })
-                setShowLoginModal(false)
+                setShowSignUpModal(false)
             } catch (error) {
                 setError("Failed to sign up. Please try again.")
                 setShowError(true)

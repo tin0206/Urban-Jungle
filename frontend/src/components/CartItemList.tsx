@@ -38,14 +38,14 @@ export default function CartItemList() {
         .then((response) => response.json())
         .then((data) => {
           setCartItems(data.plants)
+          if (data.removed_plants.length > 0) {
+            deleteItems(data.plants_removed)
+          }
           const totalMount = data.plants.reduce((acc: number, item: CartItem) => {
             const quantity = cart.find((cartItem: CartItem) => cartItem.id === item.id)?.quantity
             return acc + (item.price * (quantity || 0))
           }, 0)
           setSubtotal(totalMount)
-          if (data.removed_plants.length > 0) {
-            deleteItems(data.plants_removed)
-          }
         })
         .catch((error) => {
           console.error("Error fetching plants from localStorage:", error)
