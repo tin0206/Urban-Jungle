@@ -17,7 +17,7 @@ export default function CartItemList() {
   const { click, increment } = useCartStore()
   const { user } = useUserStore()
   const { setShowShoppingCart } = useShoppingCart()
-  const { cart, deleteItems } = useLocalStorageCart()
+  const { cart, deleteItems, removeItem } = useLocalStorageCart()
 
   const findQuantity = (id: number) => {
     const quantity = cart.find((item: CartItem) => item.id === id)?.quantity
@@ -77,24 +77,34 @@ export default function CartItemList() {
 
   async function handleRemoveItem(itemId: number) {
     setIsLoading(true)
-    try {
-      await fetch(`http://localhost:8000/api/shopping_cart/removeItem`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${localStorage.getItem("jwt_token")}`,
-        },
-        body: JSON.stringify({ item_id: itemId }),
-      })
-    } catch (error) {
-      console.error("Error removing item from cart:", error) 
+    if (user == null) {
+      setTimeout(() => {
+        removeItem(itemId)
+        setIsLoading(false)
+        setShowLoading(null)
+        increment()
+      }, 1000)
     }
+    else {
+      try {
+        await fetch(`http://localhost:8000/api/shopping_cart/removeItem`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem("jwt_token")}`,
+          },
+          body: JSON.stringify({ item_id: itemId }),
+        })
+      } catch (error) {
+        console.error("Error removing item from cart:", error) 
+      }
 
-    setTimeout(() => {
-      setIsLoading(false)
-      setShowLoading(null)
-      increment()
-    }, 1000)
+      setTimeout(() => {
+        setIsLoading(false)
+        setShowLoading(null)
+        increment()
+      }, 1000)
+    }
   }
 
   return (

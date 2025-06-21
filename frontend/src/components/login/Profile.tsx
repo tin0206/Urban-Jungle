@@ -6,6 +6,8 @@ import useUserStore from "@/stores/useUserStore"
 import { useLoginModal } from "@/stores/useLoginModal"
 import useLogOut from "@/stores/useLogOut"
 import { useCartStore } from "@/stores/useCartStore"
+import { CartItem } from "@/app/model"
+import useLocalStorageCart from "@/stores/useLocalStorageCart"
 
 type ProfileProps = {
   showMainMenu: boolean;
@@ -16,8 +18,46 @@ export default function Profile({ showMainMenu }: ProfileProps) {
   const { setShowLoginModal } = useLoginModal()
   const { showLogOut, setShowLogOut } = useLogOut()
   const { click, increment } = useCartStore()
+  const { createCart, clearCart } = useLocalStorageCart()
+
+  const synchronizeCart = async () => {
+    const cartItems : CartItem[] = []
+    await fetch("http://localhost:8000/api/shopping_cart/items", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${localStorage.getItem("jwt_token")}`,
+      }
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      cartItems.push(...data)
+    })
+    .catch((error) => {
+      console.error("Error fetching cart items:", error)
+    })
+
+    if (cartItems.length === 0) {
+      clearCart()
+      createCart()
+    }
+    else {
+      clearCart()
+      const updateCart = cartItems.map((item) => {
+        return {
+          id: item.plant_id,
+          quantity: item.quantity,
+        }
+      })
+
+      localStorage.setItem("shopping_cart", JSON.stringify(updateCart))
+      createCart()
+    }
+  }
 
   async function handleLogout() {
+    await synchronizeCart()
+    increment()
     try {
       await fetch("http://localhost:8000/api/logout", {
         method: "POST",
@@ -27,7 +67,6 @@ export default function Profile({ showMainMenu }: ProfileProps) {
         credentials: "include",
       })
       clearUser()
-      increment()
       setShowLogOut(false)
       localStorage.removeItem("jwt_token")
     } catch (error) {

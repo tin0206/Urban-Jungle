@@ -157,6 +157,27 @@ class ShoppingCartController extends Controller
     }
 
     /**
+     * Update the shopping cart from local storage.
+     */
+    public function updateFromLocalStorage(Request $request)
+    {
+        $validated = $request->validate([
+            'items'=> 'required',
+        ]);
+
+        foreach ($validated['items'] as $itemData) {
+            $cartItem = ShoppingCart::create([
+                'plant_id' => $itemData['id'],
+                'quantity' => $itemData['quantity'],
+                'user_id' => Auth::guard('api')->id(),
+            ]);
+            $cartItem->save();
+        }
+
+        return response()->json(['message' => 'Shopping cart updated from local storage successfully.'], 200);
+    }
+
+    /**
      * Remove the specified resource from storage.
      */
     public function destroy(ShoppingCart $shoppingCart)

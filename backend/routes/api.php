@@ -59,6 +59,8 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/shopping_cart/updateCart', [ShoppingCartController::class, 'update']);
 
     Route::post('/shopping_cart/removeItem', [ShoppingCartController::class, 'removeItem']);
+
+    Route::post('/shopping_cart/updateCartFromLocalStorage', [ShoppingCartController::class, 'updateFromLocalStorage']);
 });
 
 
