@@ -207,4 +207,18 @@ class ShoppingCartController extends Controller
         $item->delete();
         return response()->json(['message' => 'Item removed from the shopping cart successfully.'], 200);
     }
+
+    /**
+     * Clear the shopping cart.
+     */
+    public function clearCart(Request $request) {
+        /** @var User $user */
+        $user = Auth::guard('api')->user();
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        ShoppingCart::where('user_id', $user->id)->delete();
+        return response()->json(['message' => 'Shopping cart cleared successfully.'], 200);
+    }
 }

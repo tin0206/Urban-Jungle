@@ -61,7 +61,12 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/shopping_cart/removeItem', [ShoppingCartController::class, 'removeItem']);
 
     Route::post('/shopping_cart/updateCartFromLocalStorage', [ShoppingCartController::class, 'updateFromLocalStorage']);
+
+    Route::post('/shopping_cart/clearCart', [ShoppingCartController::class, 'clearCart']);
 });
+
+// API route for orders
+Route::post('/place_order', [\App\Http\Controllers\OrderController::class, 'store']);
 
 
 
