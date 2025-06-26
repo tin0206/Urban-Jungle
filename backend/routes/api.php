@@ -68,5 +68,8 @@ Route::middleware('auth:api')->group(function () {
 // API route for orders
 Route::post('/place_order', [\App\Http\Controllers\OrderController::class, 'store']);
 
+// API route for feedback
+Route::post('/feedback', [\App\Http\Controllers\FeedbackController::class, 'store']);
+
 
 

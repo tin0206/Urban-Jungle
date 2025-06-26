@@ -102,6 +102,12 @@ export default function CheckoutDisplay() {
 
   const handlePlaceOrder = async () => {
     if (!checkName() || !checkCountry() || !checkAddress() || !checkTownCity() || !checkPhone() || !checkEmail()) return
+
+    if (cartItems.length === 0) {
+      alert("Your cart is empty. Please add items to your cart before placing an order.")
+      return
+    }
+
     setIsLoading(true)
     
     const products = cartItems.map((item: CartItem) => ({
