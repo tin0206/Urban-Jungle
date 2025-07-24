@@ -150,7 +150,7 @@ export const NavBar = () => {
             </div>
             {showMobileMenu && (
                 <div className="md:hidden w-full bg-white h-[175.125px] relative z-10">
-                    <ul className="h-full grid grid-rows-4">
+                    <ul className="h-full grid grid-rows-5">
                         <Link 
                             className={`flex items-center font-navbar cursor-pointer text-[14.6px] ${path === "/" ? "text-[rgb(105,137,39)]" : ""} hover:text-[rgb(105,137,39)] px-6 sm:px-8`}
                             href={"/"}
@@ -196,6 +196,7 @@ export const NavBar = () => {
                         >
                             Cart
                         </Link>
+                        <Profile showMainMenu={showMainMenu} />
                     </ul>
                 </div>
             )}

@@ -8,17 +8,26 @@ import useLogOut from "@/stores/useLogOut"
 import { useCartStore } from "@/stores/useCartStore"
 import { CartItem } from "@/app/model"
 import useLocalStorageCart from "@/stores/useLocalStorageCart"
+import useMobileMenu from "@/stores/useMobileMenu"
+import { useEffect } from "react"
 
 type ProfileProps = {
-  showMainMenu: boolean;
+  showMainMenu: boolean
 }
 
 export default function Profile({ showMainMenu }: ProfileProps) {
   const { user, clearUser } = useUserStore()
   const { setShowLoginModal } = useLoginModal()
   const { showLogOut, setShowLogOut } = useLogOut()
-  const { click, increment } = useCartStore()
+  const { increment } = useCartStore()
   const { createCart, clearCart } = useLocalStorageCart()
+  const { showMobileMenu, setShowMobileMenu } = useMobileMenu()
+
+  useEffect(() => {
+    if (localStorage.getItem("jwt_token") == null) {
+      clearUser()
+    } 
+  }, [])
 
   const synchronizeCart = async () => {
     const cartItems : CartItem[] = []
@@ -72,6 +81,7 @@ export default function Profile({ showMainMenu }: ProfileProps) {
     } catch (error) {
       console.error("Logout failed:", error)
     }
+    setShowMobileMenu(false)
   }
 
   return (
@@ -80,32 +90,62 @@ export default function Profile({ showMainMenu }: ProfileProps) {
     >
       { user ? (
         <>
-          <div className="w-full h-full relative z-30">
-            <CgProfile 
-              className={`${showMainMenu ? "text-white" : ""} size-6 cursor-pointer`} 
-              onClick={() => setShowLogOut(!showLogOut)}
-            />
-            {
-              showLogOut && (
-                <Button 
-                  className="mt-2 font-navbar cursor-pointer absolute w-[60px] h-[35px] text-[14px] translate-x-[-20px] transition duration-300"
+          {!showMobileMenu ? (
+            <div className="w-full h-full relative z-30">
+              <CgProfile 
+                className={`${showMainMenu ? "text-white" : ""} size-6 cursor-pointer`} 
+                onClick={() => setShowLogOut(!showLogOut)}
+              />
+              {
+                showLogOut && (
+                  <Button 
+                    className="mt-2 font-navbar cursor-pointer absolute w-[60px] h-[35px] text-[14px] translate-x-[-20px] transition duration-300"
+                    onClick={handleLogout}
+                  >
+                    Log out
+                  </Button>
+                )
+              }
+            </div>
+          ) : (
+            <div>
+              <div className="flex justify-center mb-0.5">
+                <Button
+                  className="font-navbar cursor-pointer transition duration-300 w-5/12"
                   onClick={handleLogout}
                 >
-                  Log out
+                  <span className="ml-2">Logout</span>
                 </Button>
-              )
-            }
-          </div>
+              </div>
+            </div>
+          )}
         </>
       ) : (
         <div>
-          <Button
-            className="font-navbar cursor-pointer transition duration-300"
-            onClick={() => setShowLoginModal(true)}
-          >
-            <CgProfile className="size-6" />
-            <span className="ml-2">Login</span>
-          </Button>
+          {
+            !showMobileMenu ? (
+              <Button
+                className="font-navbar cursor-pointer transition duration-300"
+                onClick={() => setShowLoginModal(true)}
+              >
+                <CgProfile className="size-6" />
+                <span className="ml-2">Login</span>
+              </Button>
+            ) : (
+              <div className="flex justify-center mb-0.5">
+                <Button
+                  className="font-navbar cursor-pointer transition duration-300 w-5/12"
+                  onClick={() => {
+                    setShowLoginModal(true)
+                    setShowMobileMenu(false)
+                  }}
+                >
+                  <CgProfile className="size-6" />
+                  <span className="ml-2">Login</span>
+                </Button>
+              </div>
+            )
+          }
         </div>
       )}
     </div>

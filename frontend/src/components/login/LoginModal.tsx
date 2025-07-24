@@ -48,12 +48,6 @@ export default function LoginModal() {
                     setShowError(true)
                     return
                 }
-                setUser({
-                    id: data.user?.id,
-                    name: data.user?.name,
-                    email: data.user?.email,
-                    role: data.user?.role,
-                })
                 setShowSignUpModal(false)
             } catch (error) {
                 setError("Failed to sign up. Please try again.")
