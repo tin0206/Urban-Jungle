@@ -26,7 +26,7 @@ export default function CartItemList() {
 
   useEffect(() => {
     const fetchCartItems = async () => {
-      if (user === null) {
+      if (user === null || user.role != "admin") {
         const plants_ids = cart.map((item: CartItem) => item.id)
         await fetch("http://localhost:8000/api/plants/localStorage", {
           method: "POST",
@@ -51,7 +51,7 @@ export default function CartItemList() {
           console.error("Error fetching plants from localStorage:", error)
         })
       }
-      else {
+      else if (user.role !== "admin") {
         await fetch("http://localhost:8000/api/shopping_cart/items", {
           method: "GET",
           headers: {

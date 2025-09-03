@@ -154,16 +154,27 @@ class PlantController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(PlantsCreate $request)
+    public function store(Request $request)
     {
         //
+        $plant = Plant::where('name', $request->input('name'))->first();
+        if ($plant) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Plant with this name already exists!',
+            ], 409);
+        }
+
         $plant = new Plant();
         $plant->name = $request->input('name');
         $plant->description = $request->input('description');
         $plant->category_id = $request->input('category_id');
         $plant->price = $request->input('price');
         $plant->save();
-        return redirect()->route('plants.create')->with('success', 'Plant created successfully!');
+        return response()->json([
+            'success' => true,
+            'message' => 'Plant created successfully!',
+        ]);
     }
 
     /**
@@ -185,16 +196,37 @@ class PlantController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Plant $plant)
+    public function update(Request $request, $id = null)
     {
-        //
+        if ($id) {
+            $plant = Plant::find($id);
+            if (!$plant) {
+                return response()->json(['error' => 'Plant not found'], 404);
+            }
+
+            $plant->name = $request->input('name');
+            $plant->description = $request->input('description');
+            $plant->category_id = $request->input('category_id');
+            $plant->price = $request->input('price');
+            $plant->save();
+
+            return response()->json(['success' => true]);
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Plant $plant)
+    public function destroy($id = null)
     {
-        //
+        if ($id) {
+            $plant = Plant::find($id);
+            if ($plant) {
+                $plant->delete();
+                return response()->json(['success' => true]);
+            }
+            return response()->json(['error' => 'Plant not found'], 404);
+        }
+        return response()->json(['error' => 'Invalid plant ID'], 400);
     }
 }

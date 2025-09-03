@@ -12,6 +12,7 @@ import Link from 'next/link'
 import ShoppingCart from "./ShoppingCart"
 import Profile from "./login/Profile"
 import useLogOut from "@/stores/useLogOut"
+import useUserStore from "@/stores/useUserStore"
 
 export const NavBar = () => {
     const { showMobileMenu, setShowMobileMenu } = useMobileMenu()
@@ -19,6 +20,13 @@ export const NavBar = () => {
     const [showMainMenu, setShowMainMenu] = useState(false)
     const { setShowShoppingCart } = useShoppingCart()
     const path = usePathname()
+    const { user, setUser } = useUserStore()
+
+    useEffect(() => {
+        if (localStorage.getItem("jwt_token")) {
+            getUser()
+        }
+    }, [])
 
     useEffect(() => {
         if (path === "/" || path === "/about" || path === "/contact") {
@@ -44,6 +52,32 @@ export const NavBar = () => {
 
         return () => window.removeEventListener("resize", handleResize)
     }, [])
+
+    const getUser = async () => {
+        const jwt_token = localStorage.getItem("jwt_token")
+        if (jwt_token) {
+            await fetch("http://localhost:8000/api/user", {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${jwt_token}`,
+                    "Accept": "application/json",
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data)
+                setUser({
+                    id: data.user.id,
+                    name: data.user.name,
+                    email: data.user.email,
+                    role: data.user.role,
+                })
+            })
+            .catch((error) => {
+                console.error("Error fetching user:", error)
+            })
+        }
+    }
 
     return (
         <div className="w-full h-[70px] md:h-20">
@@ -122,14 +156,25 @@ export const NavBar = () => {
                             </li>
                         </ul>
                     </div>
-                    <div
-                        className="cursor-pointer"
-                        onClick={() => {
-                            setShowLogOut(false)
-                        }}
-                    >
-                        <ShoppingCart showMainMenu={showMainMenu} />
-                    </div>
+                    {
+                        !user || user.role !== "admin" ? (
+                            <div
+                                className="cursor-pointer"
+                                onClick={() => {
+                                    setShowLogOut(false)
+                                }}
+                            >
+                                <ShoppingCart showMainMenu={showMainMenu} />
+                            </div>
+                        ) : (
+                            <Link 
+                                className={`cursor-pointer ${showMainMenu ? "text-white" : ""} px-2 text-[16px] ${path === "/admin" ? "text-[#698927]" : ""} hover:text-[#698927]`}
+                                href={"/admin"}
+                            >
+                                Admin
+                            </Link>
+                        ) 
+                    }
                     <Profile showMainMenu={showMainMenu} />
                 </div>
                 <div className="flex md:hidden">
@@ -187,15 +232,29 @@ export const NavBar = () => {
                         >
                             Contact
                         </Link>
-                        <Link
-                            className={`flex items-center font-navbar cursor-pointer text-[14.6px] ${path === "contact" ? "text-[rgb(105,137,39)]" : ""} hover:text-[rgb(105,137,39)] px-6 sm:px-8`}
-                            href={"/cart"}
-                            onClick={() => {
-                                setShowMobileMenu(false)
-                            }}
-                        >
-                            Cart
-                        </Link>
+                        {
+                            !user || user.role !== "admin" ? (
+                                <Link
+                                    className={`flex items-center font-navbar cursor-pointer text-[14.6px] ${path === "contact" ? "text-[rgb(105,137,39)]" : ""} hover:text-[rgb(105,137,39)] px-6 sm:px-8`}
+                                    href={"/cart"}
+                                    onClick={() => {
+                                        setShowMobileMenu(false)
+                                    }}
+                                >
+                                    Cart
+                                </Link>
+                            ) : (
+                                 <Link 
+                                    className={`flex items-center font-navbar cursor-pointer text-[14.6px] ${path === "/admin" ? "text-[rgb(105,137,39)]" : ""} hover:text-[rgb(105,137,39)] px-6 sm:px-8`}
+                                    href={"/admin"}
+                                    onClick={() => {
+                                        setShowMobileMenu(false)
+                                    }}
+                                >
+                                    Admin
+                                </Link>
+                            )
+                        }
                         <Profile showMainMenu={showMainMenu} />
                     </ul>
                 </div>

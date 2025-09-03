@@ -28,7 +28,7 @@ export default function MainPart({ product }: MainPartProps) {
         setAddingToCart(true)
         const value = inputRef.current?.value
         if (value) {
-            if (user === null) {
+            if (user === null || user.role != "admin") {
                 let item : any = {
                     id: product.id,
                     quantity: value,

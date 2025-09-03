@@ -23,7 +23,7 @@ class UserCreate extends FormRequest
     {
         return [
             //
-            'username' => 'required|string',
+            'name' => 'required|string',
             'password' => 'required|string',
         ];
     }

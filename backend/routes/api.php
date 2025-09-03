@@ -26,19 +26,29 @@ Route::post('/signup', [UserController::class, 'store']);
 
 Route::post('/login', [UserController::class, 'login']);
 
-Route::middleware('auth:api')->group(function () {
-    Route::get('/user', [UserController::class, 'user']);
+Route::get('/user', [UserController::class, 'user']);
 
+Route::middleware('auth:api')->group(function () {
     Route::post('/logout', [UserController::class, 'logout']);
 });
 
 // API route for categories
+Route::post('/categories/addCategory', [CategoryController::class, 'store']);
+
+Route::delete('/categories/removeCategory/{id}', [CategoryController::class, 'destroy']);
+
 Route::get('/categories', [CategoryController::class, 'apiIndex']);
 
 Route::get('/categories/{category_name}', [CategoryController::class, 'apiIndex']);
 
 // API route for plants
 Route::get('/plants', [\App\Http\Controllers\PlantController::class, 'apiIndex']);
+
+Route::post('/plants/addPlant', [\App\Http\Controllers\PlantController::class, 'store']);
+
+Route::put('/plants/updatePlant/{id}', [\App\Http\Controllers\PlantController::class, 'update']);
+
+Route::delete('/plants/removePlant/{id}', [\App\Http\Controllers\PlantController::class, 'destroy']);
 
 Route::post('/plants/localStorage', [\App\Http\Controllers\PlantController::class, 'apiLocalStorage']);
 

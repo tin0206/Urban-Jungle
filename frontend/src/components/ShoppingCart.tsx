@@ -22,10 +22,10 @@ export default function ShoppingCart({ showMainMenu }: ShoppingCartProps) {
 
     useEffect(() => {
         const fetchCartQuantity = async () => {
-            if (user === null) {
+            if (user === null || user.role != "admin") {
                 setQuantity(cart.length)
             }
-            else {
+            else if (user.role !== "admin") {
                 fetch("http://localhost:8000/api/shopping_cart/quantity", {
                     method: "GET",
                     headers: {

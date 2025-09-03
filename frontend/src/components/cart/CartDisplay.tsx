@@ -33,7 +33,7 @@ export default function CartDisplay() {
 
     useEffect(() => {
         const fetchCartItems = async () => {
-            if (user === null) {
+            if (user === null || user.role != "admin") {
                 const plants_ids = cart.map((item: CartItem) => item.id)
                 await fetch("http://localhost:8000/api/plants/localStorage", {
                     method: "POST",
@@ -58,7 +58,7 @@ export default function CartDisplay() {
                     setNumberOfItems(totalItems)
                 })
             }
-            else {
+            else if (user.role !== "admin") {
                 await fetch("http://localhost:8000/api/shopping_cart/items", {
                     method: "GET",
                     headers: {
@@ -151,7 +151,7 @@ export default function CartDisplay() {
             })
 
             if (itemsChangeList.length > 0) {
-                if (user === null) {
+                if (user === null || user.role != "admin") {
                     updateItems(itemsChangeList.filter(item => item !== null) as CartItem[])
                     increment()
                 }

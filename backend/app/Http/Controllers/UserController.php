@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UserCreate;
+use App\Models\PersonalAccessToken;
 use App\Models\ShoppingCart;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -29,7 +30,6 @@ class UserController extends Controller
     public function create()
     {
         //
-
     }
 
     /**
@@ -50,7 +50,6 @@ class UserController extends Controller
                 'password' => Hash::make($request->input('password')),
             ]);
 
-            $user->save();
             return response()->json([
                 'user' => $user,
                 'status' => 'success',
@@ -65,6 +64,24 @@ class UserController extends Controller
     {
         $credentials = $request->only('name', 'password');
 
+        $name = $request->input('name');
+        $password = $request->input('password');
+        $user = User::where('name', $name)->first();
+        if ($user) {
+            if (!Hash::check($password,  $user->password)) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Wrong password'
+                ], 401);
+            }
+        }
+        else {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'User not found'
+            ], 404);
+        }
+
         if (!$token = JWTAuth::attempt($credentials)) {
             return response()->json([
                 'status' => 'error',
@@ -75,12 +92,18 @@ class UserController extends Controller
         $cookie = cookie(
             'jwt_token',
             $token,
-            60 * 24,
+            60 * 24, // 1 day
             null,
             null,
             false,
             true
         );
+
+        PersonalAccessToken::create([
+            'user_id' => $user->id,
+            'token' => $token,
+            'expires_at' => now()->addDays(1),
+        ]);
 
         return response()->json([
             'user' => Auth::user(),
@@ -103,8 +126,18 @@ class UserController extends Controller
     /**
      * Display the authenticated user.
      */
-    public function user() {
-        return Auth::user();
+    public function user(Request $request) {
+        $jwt_token = $request->bearerToken();
+        $user = PersonalAccessToken::where('token', $jwt_token)->latest()->first()->user;
+        if ($user) {
+            return response()->json([
+                'user' => $user,
+            ]);
+        }
+        return response()->json([
+            'status' => 'error',
+            'message' => 'User not found'
+        ], 404);
     }
 
     /**

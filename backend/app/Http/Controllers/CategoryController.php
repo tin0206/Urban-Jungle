@@ -78,10 +78,20 @@ class CategoryController extends Controller
     public function store(CategoriesCreate $request)
     {
         //
+        $category = Category::where('name', $request->input('name'))->first();
+        if ($category) {
+            return response()->json([
+                'message' => 'Category already exists!',
+                'category' => $category
+            ], 409);
+        }
         $category = new Category();
         $category->name = $request->input('name');
         $category->save();
-        return redirect()->route('categories.create')->with('success', 'Category created successfully!');
+        return response()->json([
+            'message' => 'Category created successfully!',
+            'category' => $category
+        ]);
     }
 
     /**
@@ -111,8 +121,24 @@ class CategoryController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Category $category)
+    public function destroy($category_id = null)
     {
-        //
+        if ($category_id) {
+            $category = Category::find($category_id);
+            if ($category) {
+                $category->delete();
+                return response()->json([
+                    'message' => 'Category deleted successfully!'
+                ]);
+            } else {
+                return response()->json([
+                    'message' => 'Category not found!'
+                ], 404);
+            }
+        } else {
+            return response()->json([
+                'message' => 'Category ID is required!'
+            ], 400);
+        }
     }
 }
