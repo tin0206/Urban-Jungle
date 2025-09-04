@@ -10,6 +10,7 @@ import { CartItem } from "@/app/model"
 import useLocalStorageCart from "@/stores/useLocalStorageCart"
 import useMobileMenu from "@/stores/useMobileMenu"
 import { useEffect } from "react"
+import { useRouter } from "next/navigation"
 
 type ProfileProps = {
   showMainMenu: boolean
@@ -22,6 +23,7 @@ export default function Profile({ showMainMenu }: ProfileProps) {
   const { increment } = useCartStore()
   const { createCart, clearCart } = useLocalStorageCart()
   const { showMobileMenu, setShowMobileMenu } = useMobileMenu()
+  const router = useRouter()
 
   useEffect(() => {
     if (localStorage.getItem("jwt_token") == null) {
@@ -75,6 +77,7 @@ export default function Profile({ showMainMenu }: ProfileProps) {
         },
         credentials: "include",
       })
+      router.push("/")
       clearUser()
       setShowLogOut(false)
       localStorage.removeItem("jwt_token")

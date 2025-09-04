@@ -33,7 +33,7 @@ export default function CartDisplay() {
 
     useEffect(() => {
         const fetchCartItems = async () => {
-            if (user === null || user.role != "admin") {
+            if (user === null) {
                 const plants_ids = cart.map((item: CartItem) => item.id)
                 await fetch("http://localhost:8000/api/plants/localStorage", {
                     method: "POST",

@@ -89,7 +89,7 @@ export default function CategoryManagement() {
                 <h1 className="font-bold text-xl">
                     Manage Categories
                 </h1>
-                <div className="h-20 overflow-y-auto border">
+                <div className="h-40 overflow-y-auto border">
                     {
                         isLoading && isDeleting ? (
                             <div role="status">

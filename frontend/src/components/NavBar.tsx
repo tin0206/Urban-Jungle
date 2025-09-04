@@ -65,7 +65,6 @@ export const NavBar = () => {
             })
             .then(response => response.json())
             .then(data => {
-                console.log(data)
                 setUser({
                     id: data.user.id,
                     name: data.user.name,

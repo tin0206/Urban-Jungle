@@ -22,6 +22,19 @@ class UserController extends Controller
     public function index()
     {
         //
+        $users = User::all();
+        $users = $users->map(function ($user) {
+            return [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'role' => $user->role,
+            ];
+        });
+        return response()->json([
+            'status' => 'success',
+            'users' => $users,
+        ]);
     }
 
     /**
@@ -48,6 +61,8 @@ class UserController extends Controller
             $user = User::create([
                 'name' => $request->input('name'),
                 'password' => Hash::make($request->input('password')),
+                'email' => $request->input('email'),
+                'role' => $request->input('role', 'user'),
             ]);
 
             return response()->json([
@@ -167,8 +182,25 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($id = null)
     {
-        //
+        if ($id) {
+            $user = User::find($id);
+            if ($user) {
+                ShoppingCart::where('user_id', $user->id)->delete();
+                $user->delete();
+                return response()->json([
+                    'message' => 'User deleted successfully!'
+                ]);
+            } else {
+                return response()->json([
+                    'message' => 'User not found!'
+                ], 404);
+            }
+        } else {
+            return response()->json([
+                'message' => 'User ID is required!'
+            ], 400);
+        }
     }
 }

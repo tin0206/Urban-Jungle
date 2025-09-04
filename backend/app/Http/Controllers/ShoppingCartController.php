@@ -86,6 +86,7 @@ class ShoppingCartController extends Controller
 
 
         $existingItem = ShoppingCart::where('plant_id', $validated['plant_id'])
+                                    ->where('user_id', $user->id)
                                     ->first();
 
         if ($existingItem) {

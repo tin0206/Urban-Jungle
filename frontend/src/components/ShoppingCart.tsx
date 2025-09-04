@@ -22,7 +22,7 @@ export default function ShoppingCart({ showMainMenu }: ShoppingCartProps) {
 
     useEffect(() => {
         const fetchCartQuantity = async () => {
-            if (user === null || user.role != "admin") {
+            if (user === null) {
                 setQuantity(cart.length)
             }
             else if (user.role !== "admin") {

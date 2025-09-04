@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { Category, Plant } from "@/app/model";
+import useUserStore from "@/stores/useUserStore";
 
 export default function PlantManagement() {
     const [isLoading, setIsLoading] = useState(false)
@@ -16,6 +17,7 @@ export default function PlantManagement() {
     const [plantDescription, setPlantDescription] = useState("")
     const [plantPrice, setPlantPrice] = useState<number | "">("")
     const [mode, setMode] = useState<"add" | "edit">("add")
+    const { user } = useUserStore()
 
     useEffect(() => {
         fetch("http://localhost:8000/api/categories")
@@ -54,6 +56,8 @@ export default function PlantManagement() {
     }
 
     const addNewPlant = async () => {
+        if (user && user?.role !== "admin") return
+
         if (!plantName || !plantDescription || !plantPrice || plantPrice <= 0) return;
         setIsModifying(true);
         setIsLoading(true);
@@ -86,6 +90,8 @@ export default function PlantManagement() {
     }
 
     const updatePlant = async (id: number) => {
+        if (user && user?.role !== "admin") return
+
         if (!plantName || !plantDescription || !plantPrice || plantPrice <= 0) return;
 
         setIsModifying(true);
@@ -119,21 +125,23 @@ export default function PlantManagement() {
     }
 
     const deletePlant = async (id: number) => {
-        setIsLoading(true);
-        setIsDeleting(true);
+        if (user && user?.role !== "admin") return
+
+        setIsLoading(true)
+        setIsDeleting(true)
         await fetch(`http://localhost:8000/api/plants/removePlant/${id}`, {
             method: 'DELETE',
         })
         .then(response => response.json())
         .then((data) => {
-            setPlantList(plantList.filter((plant) => plant.id !== id));
+            setPlantList(plantList.filter((plant) => plant.id !== id))
         })
         .catch((error) => {
-            console.error("Error deleting plant:", error);
+            console.error("Error deleting plant:", error)
         })
         .finally(() => {
-            setIsLoading(false);
-            setIsDeleting(false);
+            setIsLoading(false)
+            setIsDeleting(false)
         })
     }
 

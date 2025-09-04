@@ -14,8 +14,8 @@ export default function CheckoutDisplay() {
   const [couponClick, setCouponClick] = useState(false)
   const [firstname, setFirstname] = useState<string>("")
   const [lastname, setLastname] = useState<string>("")
-  const [country, setCountry] = useState<string>("")
-  const [countryPhoneCode, setCountryPhoneCode] = useState<string>("")
+  const [country, setCountry] = useState<string>("Vietnam")
+  const [countryPhoneCode, setCountryPhoneCode] = useState<string>("84")
   const [streetAddress, setStreetAddress] = useState<string>("")
   const [postcode, setPostcode] = useState<string>("")
   const [townCity, setTownCity] = useState<string>("")
@@ -100,21 +100,107 @@ export default function CheckoutDisplay() {
     return true
   }
 
+  const fetchCartItems = async () => {
+    if (user === null) {
+      const plants_ids = cart.map((item: CartItem) => item.id)
+      await fetch("http://localhost:8000/api/plants/localStorage", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ plants_id: plants_ids }),
+      })
+      .then((response) => response.json())
+      .then((data) => {
+        setCartItems(data.plants)
+        if (data.removed_plants.length > 0) {
+          deleteItems(data.removed_plants)
+        }
+        const prices = data.plants.map((item: CartItem) => item.price * (cart.find(cartItem => cartItem.id === item.id)?.quantity || 0))
+        setSubtotal(prices)
+        const total = prices.reduce((acc: number, price: number) => acc + price, 0)
+        setTotalPrice(total)
+      })
+      .catch((error) => {
+        console.error("Error fetching plants from localStorage:", error)
+      })
+    }
+    else {
+      await fetch("http://localhost:8000/api/shopping_cart/items", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("jwt_token")}`,
+        },
+      })
+      .then((response) => response.json())
+      .then((data) => {
+        setCartItems(data)
+        const prices = data.map((item: CartItem) => item.price * item.quantity)
+        setSubtotal(prices)
+        const total = prices.reduce((acc: number, price: number) => acc + price, 0)
+        setTotalPrice(total)
+      }) 
+      .catch((error) => {
+        console.error("Error fetching cart items:", error)
+      })
+    }
+  }
+
   const handlePlaceOrder = async () => {
     if (!checkName() || !checkCountry() || !checkAddress() || !checkTownCity() || !checkPhone() || !checkEmail()) return
 
-    if (cartItems.length === 0) {
+    const fetchCartItems_local = async () => {
+       if (user === null) {
+        const plants_ids = cart.map((item: CartItem) => item.id)
+        const response = await fetch("http://localhost:8000/api/plants/localStorage", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ plants_id: plants_ids }),
+        })
+        const data = await response.json()
+        setCartItems(data.plants)
+        if (data.removed_plants.length > 0) deleteItems(data.removed_plants)
+        const prices = data.plants.map(
+          (item: CartItem) => item.price * (cart.find(c => c.id === item.id)?.quantity || 0)
+        )
+        setSubtotal(prices)
+        setTotalPrice(prices.reduce((a: any, b: any) => a + b, 0))
+        return data.plants
+      } else {
+        const response = await fetch("http://localhost:8000/api/shopping_cart/items", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem("jwt_token")}`,
+          },
+        })
+        const data = await response.json()
+        setCartItems(data)
+        const prices = data.map((item: CartItem) => item.price * item.quantity)
+        setSubtotal(prices)
+        setTotalPrice(prices.reduce((a: any, b: any) => a + b, 0))
+        return data
+      }
+    }
+
+    setIsLoading(true)
+
+    const latestCartItems = await fetchCartItems_local()
+
+    if (latestCartItems.length === 0) {
       alert("Your cart is empty. Please add items to your cart before placing an order.")
       return
     }
 
-    setIsLoading(true)
-    
-    const products = cartItems.map((item: CartItem) => ({
+    const products = latestCartItems.map((item: CartItem) => ({
       plant_id: user ? item.plant_id : item.id,
       quantity: user ? item.quantity : findQuantity(item.id),
       price: item.price,
     }))
+
+    const fullPhone = phone.startsWith("0") ? `+${countryPhoneCode}${phone.slice(1)}` : `+${countryPhoneCode}${phone}`
+    const latestTotal = products.reduce((acc: number, item: any) => acc + item.price * item.quantity, 0)
 
     const response = await fetch("http://localhost:8000/api/place_order", {
       method: "POST",
@@ -129,11 +215,11 @@ export default function CheckoutDisplay() {
         'street_address': streetAddress,
         'postal_code': postcode,
         'city': townCity,
-        'phone': internationalPhone,
+        'phone': fullPhone,
         'email': email,
         'additional_information': orderNotes,
         'cart_items': products,
-        'total_amount': totalPrice,
+        'total_amount': latestTotal,
       }),
     })
     if (response.ok) {
@@ -159,68 +245,10 @@ export default function CheckoutDisplay() {
     }
     setTimeout(() => {
       setIsLoading(false)
-      setFirstname("")
-      setLastname("")
-      setCountry("")
-      setCountryPhoneCode("")
-      setStreetAddress("")
-      setPostcode("")
-      setTownCity("")
-      setPhone("")
-      setInternationalPhone("")
-      setEmail("")
-      setOrderNotes("")
     }, 1000)
   }
 
   useEffect(() => {
-    const fetchCartItems = async () => {
-      if (user === null) {
-        const plants_ids = cart.map((item: CartItem) => item.id)
-        await fetch("http://localhost:8000/api/plants/localStorage", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ plants_id: plants_ids }),
-        })
-        .then((response) => response.json())
-        .then((data) => {
-          setCartItems(data.plants)
-          if (data.removed_plants.length > 0) {
-            deleteItems(data.removed_plants)
-          }
-          const prices = data.plants.map((item: CartItem) => item.price * (cart.find(cartItem => cartItem.id === item.id)?.quantity || 0))
-          setSubtotal(prices)
-          const total = prices.reduce((acc: number, price: number) => acc + price, 0)
-          setTotalPrice(total)
-        })
-        .catch((error) => {
-          console.error("Error fetching plants from localStorage:", error)
-        })
-      }
-      else {
-        await fetch("http://localhost:8000/api/shopping_cart/items", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${localStorage.getItem("jwt_token")}`,
-          },
-        })
-        .then((response) => response.json())
-        .then((data) => {
-          setCartItems(data)
-          const prices = data.map((item: CartItem) => item.price * item.quantity)
-          setSubtotal(prices)
-          const total = prices.reduce((acc: number, price: number) => acc + price, 0)
-          setTotalPrice(total)
-        }) 
-        .catch((error) => {
-          console.error("Error fetching cart items:", error)
-        })
-      }
-    }
-
     fetchCartItems()
   }, [click, user])
 
@@ -284,6 +312,7 @@ export default function CheckoutDisplay() {
                       placeholder="First name" 
                       className="border h-10 font-navbar text-[rgb(71,85,105)] py-3 px-4 w-full"
                       required
+                      value={firstname}
                       onChange={(e) => setFirstname(e.target.value)}
                     />
                   </div>
@@ -296,6 +325,7 @@ export default function CheckoutDisplay() {
                       placeholder="Last name" 
                       className="border h-10 font-navbar text-[rgb(71,85,105)] py-3 px-4 w-full"
                       required
+                      value={lastname}
                       onChange={(e) => setLastname(e.target.value)}
                     />
                   </div>
@@ -310,6 +340,7 @@ export default function CheckoutDisplay() {
                       setCountry(country.name)
                       setCountryPhoneCode(country.phone_code)
                     }}
+                    value={country}
                     required
                   />
                 </div>
@@ -322,6 +353,7 @@ export default function CheckoutDisplay() {
                     placeholder="Street address" 
                     className="border h-10 font-navbar text-[rgb(71,85,105)] py-3 px-4 w-full"
                     required
+                    value={streetAddress}
                     onChange={(e) => setStreetAddress(e.target.value)}
                   />
                 </div>
@@ -334,6 +366,7 @@ export default function CheckoutDisplay() {
                     placeholder="Postcode / ZIP" 
                     className="border h-10 font-navbar text-[rgb(71,85,105)] py-3 px-4 w-full"
                     required
+                    value={postcode}
                     onChange={(e) => setPostcode(e.target.value)}
                   />
                 </div>
@@ -346,6 +379,7 @@ export default function CheckoutDisplay() {
                     placeholder="Town / City" 
                     className="border h-10 font-navbar text-[rgb(71,85,105)] py-3 px-4 w-full"
                     required
+                    value={townCity}
                     onChange={(e) => setTownCity(e.target.value)}
                   />
                 </div>
@@ -366,6 +400,7 @@ export default function CheckoutDisplay() {
                       placeholder="Phone" 
                       className="border h-10 font-navbar text-[rgb(71,85,105)] py-3 px-4 w-full"
                       required
+                      value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                     />
                   </div>
@@ -379,6 +414,7 @@ export default function CheckoutDisplay() {
                     placeholder="Email address" 
                     className="border h-10 font-navbar text-[rgb(71,85,105)] py-3 px-4 w-full"
                     required
+                    value={email}
                     onChange={(e) => setEmail(e.target.value)}
                   />
                 </div>
@@ -391,6 +427,7 @@ export default function CheckoutDisplay() {
                 <textarea 
                   placeholder="Notes about your order, e.g. special notes for delivery." 
                   className="border h-16 font-navbar text-[rgb(71,85,105)] py-3 px-4 w-full mb-[29.184px] md:mb-8"
+                  value={orderNotes}
                   onChange={(e) => setOrderNotes(e.target.value)}
                 />
               </div>
@@ -435,6 +472,7 @@ export default function CheckoutDisplay() {
               </div>
               <Button 
                 className="mt-6 mb-4 bg-[rgb(136,173,53)] rounded-3xl cursor-pointer text-white font-navbar text-[14.592px] leading-[19.6992px] h-[46px] w-full px-[30px] py-[15px] hover:bg-[rgb(105,137,39)] transition-colors duration-200"
+                disabled={isLoading}
                 onClick={handlePlaceOrder} 
               >
                 Place order

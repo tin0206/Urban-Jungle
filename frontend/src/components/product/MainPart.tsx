@@ -28,14 +28,14 @@ export default function MainPart({ product }: MainPartProps) {
         setAddingToCart(true)
         const value = inputRef.current?.value
         if (value) {
-            if (user === null || user.role != "admin") {
+            if (user === null) {
                 let item : any = {
                     id: product.id,
                     quantity: value,
                 }
                 addItem(item as CartItem)
             }
-            else {
+            else if (user.role !== 'admin') {
                 try {
                     await fetch("http://localhost:8000/api/shopping_cart/addItem", {
                         method: "POST",

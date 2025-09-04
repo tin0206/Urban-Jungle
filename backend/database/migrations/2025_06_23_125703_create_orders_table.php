@@ -13,17 +13,16 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id')->nullable();
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('first_name');
             $table->string('last_name');
             $table->string('country');
-            $table->string('street_address');
+            $table->text('street_address');
             $table->string('postal_code')->nullable();
             $table->string('city');
             $table->string('phone');
             $table->string('email');
-            $table->string('additional_information')->nullable();
+            $table->text('additional_information')->nullable();
             $table->decimal('total_amount', 10, 2);
             $table->enum('status', ['pending', 'processing', 'completed', 'cancelled'])->default('pending');
             $table->timestamps();

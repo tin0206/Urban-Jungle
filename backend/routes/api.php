@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ShoppingCartController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -25,6 +26,10 @@ Route::get('/user', function (Request $request) {
 Route::post('/signup', [UserController::class, 'store']);
 
 Route::post('/login', [UserController::class, 'login']);
+
+Route::get('/getUsers', [UserController::class, 'index']);
+
+Route::delete('/deleteUser/{id}', [UserController::class, 'destroy']);
 
 Route::get('/user', [UserController::class, 'user']);
 
@@ -76,7 +81,13 @@ Route::middleware('auth:api')->group(function () {
 });
 
 // API route for orders
-Route::post('/place_order', [\App\Http\Controllers\OrderController::class, 'store']);
+Route::get('/orders', [OrderController::class, 'index']);
+
+Route::get('/orders/{id}', [OrderController::class, 'show']);
+
+Route::put('/orders/updateStatus/{id}', [OrderController::class, 'updateStatus']);
+
+Route::post('/place_order', [OrderController::class, 'store']);
 
 // API route for feedback
 Route::post('/feedback', [\App\Http\Controllers\FeedbackController::class, 'store']);
