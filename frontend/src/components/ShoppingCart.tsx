@@ -26,7 +26,7 @@ export default function ShoppingCart({ showMainMenu }: ShoppingCartProps) {
                 setQuantity(cart.length)
             }
             else if (user.role !== "admin") {
-                fetch("http://localhost:8000/api/shopping_cart/quantity", {
+                fetch("http://urbanjunglewebapplication-env.eba-bwwrnbuw.ap-southeast-1.elasticbeanstalk.com/api/shopping_cart/quantity", {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",

@@ -56,7 +56,7 @@ export const NavBar = () => {
     const getUser = async () => {
         const jwt_token = localStorage.getItem("jwt_token")
         if (jwt_token) {
-            await fetch("http://localhost:8000/api/user", {
+            await fetch("http://urbanjunglewebapplication-env.eba-bwwrnbuw.ap-southeast-1.elasticbeanstalk.com/api/user", {
                 method: "GET",
                 headers: {
                     "Authorization": `Bearer ${jwt_token}`,

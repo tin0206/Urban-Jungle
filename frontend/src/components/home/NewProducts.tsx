@@ -15,7 +15,7 @@ export default function NewProducts() {
     const [displayCart, setDisplayCart] = useState<number | null>(null)
 
     useEffect(() => {
-        fetch("http://localhost:8000/api/plants/new-products", {
+        fetch("http://urbanjunglewebapplication-env.eba-bwwrnbuw.ap-southeast-1.elasticbeanstalk.com/api/plants/new-products", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",

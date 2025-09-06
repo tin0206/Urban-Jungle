@@ -33,7 +33,7 @@ export default function Profile({ showMainMenu }: ProfileProps) {
 
   const synchronizeCart = async () => {
     const cartItems : CartItem[] = []
-    await fetch("http://localhost:8000/api/shopping_cart/items", {
+    await fetch("http://urbanjunglewebapplication-env.eba-bwwrnbuw.ap-southeast-1.elasticbeanstalk.com/api/shopping_cart/items", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -70,7 +70,7 @@ export default function Profile({ showMainMenu }: ProfileProps) {
     await synchronizeCart()
     increment()
     try {
-      await fetch("http://localhost:8000/api/logout", {
+      await fetch("http://urbanjunglewebapplication-env.eba-bwwrnbuw.ap-southeast-1.elasticbeanstalk.com/api/logout", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

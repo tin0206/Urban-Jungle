@@ -16,7 +16,7 @@ export default function RelatedProducts({ product }: RelatedProductsProps) {
 
   useEffect(() => {
     const productName = product.name.replace(/\s+/g, '-').toLowerCase()
-    fetch('http://localhost:8000/api/plants/' + productName + '/related', {
+    fetch('http://urbanjunglewebapplication-env.eba-bwwrnbuw.ap-southeast-1.elasticbeanstalk.com/api/plants/' + productName + '/related', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

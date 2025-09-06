@@ -18,7 +18,7 @@ export default function UserManagement() {
     const { user } = useUserStore()
 
     useEffect(() => {
-        fetch("http://localhost:8000/api/getUsers")
+        fetch("http://urbanjunglewebapplication-env.eba-bwwrnbuw.ap-southeast-1.elasticbeanstalk.com/api/getUsers")
           .then((response) => response.json())
           .then((data) => {
             setUserList(data.users)
@@ -33,7 +33,7 @@ export default function UserManagement() {
 
         setIsLoading(true)
         setIsDeleting(true)
-        await fetch(`http://localhost:8000/api/deleteUser/${id}`, {
+        await fetch(`http://urbanjunglewebapplication-env.eba-bwwrnbuw.ap-southeast-1.elasticbeanstalk.com/api/deleteUser/${id}`, {
             method: "DELETE",
         })
         .then(response => response.json())
@@ -116,7 +116,7 @@ export default function UserManagement() {
 
         setIsLoading(true)
         setIsAdding(true)
-        await fetch("http://localhost:8000/api/signup", {
+        await fetch("http://urbanjunglewebapplication-env.eba-bwwrnbuw.ap-southeast-1.elasticbeanstalk.com/api/signup", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

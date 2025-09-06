@@ -103,7 +103,7 @@ export default function CheckoutDisplay() {
   const fetchCartItems = async () => {
     if (user === null) {
       const plants_ids = cart.map((item: CartItem) => item.id)
-      await fetch("http://localhost:8000/api/plants/localStorage", {
+      await fetch("http://urbanjunglewebapplication-env.eba-bwwrnbuw.ap-southeast-1.elasticbeanstalk.com/api/plants/localStorage", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -126,7 +126,7 @@ export default function CheckoutDisplay() {
       })
     }
     else {
-      await fetch("http://localhost:8000/api/shopping_cart/items", {
+      await fetch("http://urbanjunglewebapplication-env.eba-bwwrnbuw.ap-southeast-1.elasticbeanstalk.com/api/shopping_cart/items", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -153,7 +153,7 @@ export default function CheckoutDisplay() {
     const fetchCartItems_local = async () => {
        if (user === null) {
         const plants_ids = cart.map((item: CartItem) => item.id)
-        const response = await fetch("http://localhost:8000/api/plants/localStorage", {
+        const response = await fetch("http://urbanjunglewebapplication-env.eba-bwwrnbuw.ap-southeast-1.elasticbeanstalk.com/api/plants/localStorage", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ plants_id: plants_ids }),
@@ -168,7 +168,7 @@ export default function CheckoutDisplay() {
         setTotalPrice(prices.reduce((a: any, b: any) => a + b, 0))
         return data.plants
       } else {
-        const response = await fetch("http://localhost:8000/api/shopping_cart/items", {
+        const response = await fetch("http://urbanjunglewebapplication-env.eba-bwwrnbuw.ap-southeast-1.elasticbeanstalk.com/api/shopping_cart/items", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -202,7 +202,7 @@ export default function CheckoutDisplay() {
     const fullPhone = phone.startsWith("0") ? `+${countryPhoneCode}${phone.slice(1)}` : `+${countryPhoneCode}${phone}`
     const latestTotal = products.reduce((acc: number, item: any) => acc + item.price * item.quantity, 0)
 
-    const response = await fetch("http://localhost:8000/api/place_order", {
+    const response = await fetch("http://urbanjunglewebapplication-env.eba-bwwrnbuw.ap-southeast-1.elasticbeanstalk.com/api/place_order", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -230,7 +230,7 @@ export default function CheckoutDisplay() {
           createCart()
         }
         else {
-          await fetch("http://localhost:8000/api/shopping_cart/clearCart", {
+          await fetch("http://urbanjunglewebapplication-env.eba-bwwrnbuw.ap-southeast-1.elasticbeanstalk.com/api/shopping_cart/clearCart", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
