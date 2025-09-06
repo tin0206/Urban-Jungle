@@ -37,7 +37,7 @@ export default function MainPart({ product }: MainPartProps) {
             }
             else if (user.role !== 'admin') {
                 try {
-                    await fetch("https://urbanjunglewebapplication-env.eba-bwwrnbuw.ap-southeast-1.elasticbeanstalk.com/api/shopping_cart/addItem", {
+                    await fetch("http://localhost:8000/api/shopping_cart/addItem", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",

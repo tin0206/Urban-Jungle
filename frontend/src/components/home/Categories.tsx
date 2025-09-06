@@ -7,7 +7,7 @@ import { useEffect, useState } from "react"
 export default function Categories() {
   const [categories, setCategories] = useState<Category[]>([])
   useEffect(() => {
-    fetch("https://urbanjunglewebapplication-env.eba-bwwrnbuw.ap-southeast-1.elasticbeanstalk.com/api/categories")
+    fetch("http://localhost:8000/api/categories")
       .then((response) => response.json())
       .then((data) => {
         setCategories(data)

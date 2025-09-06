@@ -23,7 +23,7 @@ export const NavBar = () => {
     const { user, setUser } = useUserStore()
 
     useEffect(() => {
-        fetch("https://urbanjunglewebapplication-env.eba-bwwrnbuw.ap-southeast-1.elasticbeanstalk.com/sanctum/csrf-cookie", {
+        fetch("http://localhost:8000/sanctum/csrf-cookie", {
             method: "GET",
             credentials: "include",
         })
@@ -63,7 +63,7 @@ export const NavBar = () => {
 
         const jwt_token = localStorage.getItem("jwt_token")
         if (jwt_token) {
-            await fetch("https://urbanjunglewebapplication-env.eba-bwwrnbuw.ap-southeast-1.elasticbeanstalk.com/api/user", {
+            await fetch("http://localhost:8000/api/user", {
                 method: "GET",
                 headers: {
                     "Authorization": `Bearer ${jwt_token}`,

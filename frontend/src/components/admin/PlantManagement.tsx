@@ -20,7 +20,7 @@ export default function PlantManagement() {
     const { user } = useUserStore()
 
     useEffect(() => {
-        fetch("https://urbanjunglewebapplication-env.eba-bwwrnbuw.ap-southeast-1.elasticbeanstalk.com/api/categories")
+        fetch("http://localhost:8000/api/categories")
             .then((response) => response.json())
             .then((data) => {
                 setCategoryList(data)
@@ -33,7 +33,7 @@ export default function PlantManagement() {
     }, [])
 
     useEffect(() => {
-        fetch("https://urbanjunglewebapplication-env.eba-bwwrnbuw.ap-southeast-1.elasticbeanstalk.com/api/plants")
+        fetch("http://localhost:8000/api/plants")
             .then((response) => response.json())
             .then((data) => {
                 setPlantList(data)
@@ -61,7 +61,7 @@ export default function PlantManagement() {
         if (!plantName || !plantDescription || !plantPrice || plantPrice <= 0) return;
         setIsModifying(true);
         setIsLoading(true);
-        await fetch('https://urbanjunglewebapplication-env.eba-bwwrnbuw.ap-southeast-1.elasticbeanstalk.com/api/plants/addPlant', {
+        await fetch('http://localhost:8000/api/plants/addPlant', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -96,7 +96,7 @@ export default function PlantManagement() {
 
         setIsModifying(true);
         setIsLoading(true);
-        await fetch(`https://urbanjunglewebapplication-env.eba-bwwrnbuw.ap-southeast-1.elasticbeanstalk.com/api/plants/updatePlant/${id}`, {
+        await fetch(`http://localhost:8000/api/plants/updatePlant/${id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -129,7 +129,7 @@ export default function PlantManagement() {
 
         setIsLoading(true)
         setIsDeleting(true)
-        await fetch(`https://urbanjunglewebapplication-env.eba-bwwrnbuw.ap-southeast-1.elasticbeanstalk.com/api/plants/removePlant/${id}`, {
+        await fetch(`http://localhost:8000/api/plants/removePlant/${id}`, {
             method: 'DELETE',
         })
         .then(response => response.json())
