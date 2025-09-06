@@ -15,7 +15,7 @@ export default function ContentContainer({ product_name }: ProductPageProps) {
     useEffect(() => {
         async function fetchProduct() {
             try {
-                await fetch(`http://urbanjunglewebapplication-env.eba-bwwrnbuw.ap-southeast-1.elasticbeanstalk.com/api/plants/${product_name}`, {
+                await fetch(`httpss://urbanjunglewebapplication-env.eba-bwwrnbuw.ap-southeast-1.elasticbeanstalk.com/api/plants/${product_name}`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",

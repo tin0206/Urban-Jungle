@@ -15,7 +15,7 @@ export default function OrderManagement() {
     const { user } = useUserStore()
 
     useEffect(() => {
-        fetch('http://urbanjunglewebapplication-env.eba-bwwrnbuw.ap-southeast-1.elasticbeanstalk.com/api/orders')
+        fetch('https://urbanjunglewebapplication-env.eba-bwwrnbuw.ap-southeast-1.elasticbeanstalk.com/api/orders')
         .then(response => response.json())
         .then(data => setOrderList(data.orders))
         .catch(error => console.error('Error fetching orders:', error));
@@ -26,7 +26,7 @@ export default function OrderManagement() {
 
         setOrderId(id)
         setIsLoading(true)
-        await fetch(`http://urbanjunglewebapplication-env.eba-bwwrnbuw.ap-southeast-1.elasticbeanstalk.com/api/orders/${id}`)
+        await fetch(`https://urbanjunglewebapplication-env.eba-bwwrnbuw.ap-southeast-1.elasticbeanstalk.com/api/orders/${id}`)
         .then(response => response.json())
         .then(data => {
             setOrderInfo(data.order)
@@ -44,7 +44,7 @@ export default function OrderManagement() {
 
         setIsLoading(true)
         setIsUpdating(true)
-        await fetch(`http://urbanjunglewebapplication-env.eba-bwwrnbuw.ap-southeast-1.elasticbeanstalk.com/api/orders/updateStatus/${id}`, {
+        await fetch(`https://urbanjunglewebapplication-env.eba-bwwrnbuw.ap-southeast-1.elasticbeanstalk.com/api/orders/updateStatus/${id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',

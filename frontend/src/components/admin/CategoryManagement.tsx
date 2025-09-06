@@ -13,7 +13,7 @@ export default function CategoryManagement() {
     const [error, setError] = useState("");
 
     useEffect(() => {
-        fetch("http://urbanjunglewebapplication-env.eba-bwwrnbuw.ap-southeast-1.elasticbeanstalk.com/api/categories")
+        fetch("https://urbanjunglewebapplication-env.eba-bwwrnbuw.ap-southeast-1.elasticbeanstalk.com/api/categories")
           .then((response) => response.json())
           .then((data) => {
             setCategoryList(data)
@@ -27,7 +27,7 @@ export default function CategoryManagement() {
         if (!category) return;
         setIsAdding(true);
         setIsLoading(true);
-        await fetch('http://urbanjunglewebapplication-env.eba-bwwrnbuw.ap-southeast-1.elasticbeanstalk.com/api/categories/addCategory', {
+        await fetch('https://urbanjunglewebapplication-env.eba-bwwrnbuw.ap-southeast-1.elasticbeanstalk.com/api/categories/addCategory', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -50,7 +50,7 @@ export default function CategoryManagement() {
     const deleteCategory = async (id: number) => {
         setIsLoading(true);
         setIsDeleting(true);
-        await fetch(`http://urbanjunglewebapplication-env.eba-bwwrnbuw.ap-southeast-1.elasticbeanstalk.com/api/categories/removeCategory/${id}`, {
+        await fetch(`https://urbanjunglewebapplication-env.eba-bwwrnbuw.ap-southeast-1.elasticbeanstalk.com/api/categories/removeCategory/${id}`, {
             method: 'DELETE',
         })
         .then(response => response.json())

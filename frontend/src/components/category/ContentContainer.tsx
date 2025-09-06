@@ -16,7 +16,7 @@ export default function ContentContainer({ category_name }: ContentContainerProp
     useEffect(() => {
         async function fetchPlants() {
             try {
-                await fetch(`http://urbanjunglewebapplication-env.eba-bwwrnbuw.ap-southeast-1.elasticbeanstalk.com/api/categories/${category_name}`, {
+                await fetch(`https://urbanjunglewebapplication-env.eba-bwwrnbuw.ap-southeast-1.elasticbeanstalk.com/api/categories/${category_name}`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",

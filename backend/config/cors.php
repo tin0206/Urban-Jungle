@@ -19,7 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['http://localhost:3000', 'https://urban-jungle-vuwg-m6ct4nqin-nguyen-trung-tins-projects.vercel.app'],
+    'allowed_origins' => ['http://localhost:3000', 'https://urban-jungle-vuwg.vercel.app'],
 
     'allowed_origins_patterns' => [],
 

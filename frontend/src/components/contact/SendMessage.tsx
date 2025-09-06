@@ -48,7 +48,7 @@ export default function SendMessage() {
     }
     setIsLoading(true)
     try {
-      await fetch("http://urbanjunglewebapplication-env.eba-bwwrnbuw.ap-southeast-1.elasticbeanstalk.com/api/feedback", {
+      await fetch("https://urbanjunglewebapplication-env.eba-bwwrnbuw.ap-southeast-1.elasticbeanstalk.com/api/feedback", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

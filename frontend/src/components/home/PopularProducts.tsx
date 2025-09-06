@@ -15,7 +15,7 @@ export default function PopularProducts() {
     const [displayCart, setDisplayCart] = useState<number | null>(null)
 
     useEffect(() => {
-        fetch("http://urbanjunglewebapplication-env.eba-bwwrnbuw.ap-southeast-1.elasticbeanstalk.com/api/plants")
+        fetch("https://urbanjunglewebapplication-env.eba-bwwrnbuw.ap-southeast-1.elasticbeanstalk.com/api/plants")
         .then((response) => response.json())
         .then((data) => {
             setPopularPlants(data)
