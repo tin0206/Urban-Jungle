@@ -18,7 +18,9 @@ export default function UserManagement() {
     const { user } = useUserStore()
 
     useEffect(() => {
-        fetch("https://urban-jungle-production.up.railway.app/api/getUsers")
+        fetch("https://urban-jungle-production.up.railway.app/api/getUsers", {
+            credentials: "include",
+        })
           .then((response) => response.json())
           .then((data) => {
             setUserList(data.users)
@@ -121,6 +123,7 @@ export default function UserManagement() {
             headers: {
                 "Content-Type": "application/json",
             },
+            credentials: "include",
             body: JSON.stringify({
                 name: name,
                 email: email,

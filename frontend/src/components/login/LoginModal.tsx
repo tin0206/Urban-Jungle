@@ -37,6 +37,7 @@ export default function LoginModal() {
                     headers: {
                         "Content-Type": "application/json"
                     },
+                    credentials: "include",
                     body: JSON.stringify({
                         name,
                         password
@@ -152,7 +153,8 @@ export default function LoginModal() {
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${localStorage.getItem("jwt_token")}`,
-            }
+            },
+            credentials: "include",
         })
         .then((response) => response.json())
         .then((data) => {
@@ -180,6 +182,7 @@ export default function LoginModal() {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${localStorage.getItem("jwt_token")}`,
                 },
+                credentials: "include",
                 body: JSON.stringify({
                     items: matchItems
                 })
@@ -199,6 +202,7 @@ export default function LoginModal() {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${localStorage.getItem("jwt_token")}`,
                 },
+                credentials: "include",
                 body: JSON.stringify({
                     items: dbLackingItems
                 })

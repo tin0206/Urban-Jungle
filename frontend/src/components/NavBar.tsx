@@ -63,6 +63,7 @@ export const NavBar = () => {
                     "Authorization": `Bearer ${jwt_token}`,
                     "Accept": "application/json",
                 },
+                credentials: "include",
             })
             .then(response => response.json())
             .then(data => {

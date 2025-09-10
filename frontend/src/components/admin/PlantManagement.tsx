@@ -20,7 +20,9 @@ export default function PlantManagement() {
     const { user } = useUserStore()
 
     useEffect(() => {
-        fetch("https://urban-jungle-production.up.railway.app/api/categories")
+        fetch("https://urban-jungle-production.up.railway.app/api/categories", {
+            credentials: "include",
+        })
             .then((response) => response.json())
             .then((data) => {
                 setCategoryList(data)
@@ -33,7 +35,9 @@ export default function PlantManagement() {
     }, [])
 
     useEffect(() => {
-        fetch("https://urban-jungle-production.up.railway.app/api/plants")
+        fetch("https://urban-jungle-production.up.railway.app/api/plants", {
+            credentials: "include",
+        })
             .then((response) => response.json())
             .then((data) => {
                 setPlantList(data)

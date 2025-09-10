@@ -16,7 +16,9 @@ export default function ProductList() {
     const [displayCart, setDisplayCart] = useState<number | null>(null)
     
     useEffect(() => {
-        fetch("https://urban-jungle-production.up.railway.app/api/plants")
+        fetch("https://urban-jungle-production.up.railway.app/api/plants", {
+            credentials: "include",
+        })
         .then((response) => response.json())
         .then((data) => {
             setProducts(data)

@@ -43,6 +43,7 @@ export default function MainPart({ product }: MainPartProps) {
                             "Content-Type": "application/json",
                             "Authorization": `Bearer ${localStorage.getItem("jwt_token")}`,
                         },
+                        credentials: "include",
                         body: JSON.stringify({
                             user_id: user?.id,
                             plant_id: product.id,

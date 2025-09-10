@@ -33,6 +33,7 @@ export default function CartItemList() {
           headers: {
             "Content-Type": "application/json",
           },
+          credentials: "include",
           body: JSON.stringify({ plants_id: plants_ids }),
         })
         .then((response) => response.json())
@@ -58,6 +59,7 @@ export default function CartItemList() {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${localStorage.getItem("jwt_token")}`,
           },
+          credentials: "include",
         })
         .then((response) => response.json())
         .then((data) => {

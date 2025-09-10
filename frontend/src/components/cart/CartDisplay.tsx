@@ -40,6 +40,7 @@ export default function CartDisplay() {
                     headers: {
                         "Content-Type": "application/json",
                     },
+                    credentials: "include",
                     body: JSON.stringify({ plants_id: plants_ids }),
                 })
                 .then((response) => response.json())
@@ -65,6 +66,7 @@ export default function CartDisplay() {
                         "Content-Type": "application/json",
                         "Authorization": `Bearer ${localStorage.getItem("jwt_token")}`,
                     },
+                    credentials: "include",
                 })
                 .then((response) => response.json())
                 .then((data) => {
@@ -116,6 +118,7 @@ export default function CartDisplay() {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${localStorage.getItem("jwt_token")}`,
                     },
+                    credentials: "include",
                     body: JSON.stringify({ item_id: itemId }),
                 })
                 .then((response) => {
@@ -162,6 +165,7 @@ export default function CartDisplay() {
                             "Content-Type": "application/json",
                             "Authorization": `Bearer ${localStorage.getItem("jwt_token")}`,
                         },
+                        credentials: "include",
                         body: JSON.stringify({ items: itemsChangeList.filter(item => item !== null) }),
                     })
                     increment()
@@ -199,6 +203,7 @@ export default function CartDisplay() {
                             "Content-Type": "application/json",
                             "Authorization": `Bearer ${localStorage.getItem("jwt_token")}`,
                         },
+                        credentials: "include",
                         body: JSON.stringify({
                             plant_id: tempDeleteItem.plant_id,
                             quantity: tempDeleteItem.quantity,

@@ -32,6 +32,7 @@ export default function ShoppingCart({ showMainMenu }: ShoppingCartProps) {
                         "Content-Type": "application/json",
                         "Authorization": `Bearer ${localStorage.getItem("jwt_token")}`,
                     },
+                    credentials: "include",
                 })
                 .then((response) => response.json())
                 .then((data) => {

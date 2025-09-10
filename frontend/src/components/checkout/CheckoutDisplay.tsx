@@ -108,6 +108,7 @@ export default function CheckoutDisplay() {
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include",
         body: JSON.stringify({ plants_id: plants_ids }),
       })
       .then((response) => response.json())
@@ -132,6 +133,7 @@ export default function CheckoutDisplay() {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${localStorage.getItem("jwt_token")}`,
         },
+        credentials: "include",
       })
       .then((response) => response.json())
       .then((data) => {
@@ -156,6 +158,7 @@ export default function CheckoutDisplay() {
         const response = await fetch("https://urban-jungle-production.up.railway.app/api/plants/localStorage", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
+          credentials: "include",
           body: JSON.stringify({ plants_id: plants_ids }),
         })
         const data = await response.json()
@@ -174,6 +177,7 @@ export default function CheckoutDisplay() {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${localStorage.getItem("jwt_token")}`,
           },
+          credentials: "include",
         })
         const data = await response.json()
         setCartItems(data)
@@ -207,6 +211,7 @@ export default function CheckoutDisplay() {
       headers: {
         "Content-Type": "application/json",
       },
+      credentials: "include",
       body: JSON.stringify({
         'user_id': user ? user.id : null,
         'first_name': firstname,
@@ -236,6 +241,7 @@ export default function CheckoutDisplay() {
               "Content-Type": "application/json",
               "Authorization": `Bearer ${localStorage.getItem("jwt_token")}`,
             },
+            credentials: "include",
           })
         }
         increment()

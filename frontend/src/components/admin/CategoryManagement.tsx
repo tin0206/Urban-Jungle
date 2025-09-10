@@ -13,7 +13,9 @@ export default function CategoryManagement() {
     const [error, setError] = useState("");
 
     useEffect(() => {
-        fetch("https://urban-jungle-production.up.railway.app/api/categories")
+        fetch("https://urban-jungle-production.up.railway.app/api/categories", {
+            credentials: "include",
+        })
           .then((response) => response.json())
           .then((data) => {
             setCategoryList(data)

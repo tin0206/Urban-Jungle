@@ -37,6 +37,7 @@ export default function AddToCart( { displayCart, id, plantId }: AddToCartProps)
             "Content-Type": "application/json",
             "Authorization": `Bearer ${localStorage.getItem("jwt_token")}`,
           },
+          credentials: "include",
           body: JSON.stringify({ plant_id: plantId, user_id: user?.id }),
         })
         increment()
