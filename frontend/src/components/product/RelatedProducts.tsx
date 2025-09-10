@@ -16,7 +16,7 @@ export default function RelatedProducts({ product }: RelatedProductsProps) {
 
   useEffect(() => {
     const productName = product.name.replace(/\s+/g, '-').toLowerCase()
-    fetch('https://urban-jungle-production.up.railway.app//api/plants/' + productName + '/related', {
+    fetch('https://urban-jungle-production.up.railway.app/api/plants/' + productName + '/related', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

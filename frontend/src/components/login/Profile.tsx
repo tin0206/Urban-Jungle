@@ -33,7 +33,7 @@ export default function Profile({ showMainMenu }: ProfileProps) {
 
   const synchronizeCart = async () => {
     const cartItems : CartItem[] = []
-    await fetch("https://urban-jungle-production.up.railway.app//api/shopping_cart/items", {
+    await fetch("https://urban-jungle-production.up.railway.app/api/shopping_cart/items", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -70,7 +70,7 @@ export default function Profile({ showMainMenu }: ProfileProps) {
     await synchronizeCart()
     increment()
     try {
-      await fetch("https://urban-jungle-production.up.railway.app//api/logout", {
+      await fetch("https://urban-jungle-production.up.railway.app/api/logout", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

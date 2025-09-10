@@ -48,7 +48,7 @@ export default function SendMessage() {
     }
     setIsLoading(true)
     try {
-      await fetch("https://urban-jungle-production.up.railway.app//api/feedback", {
+      await fetch("https://urban-jungle-production.up.railway.app/api/feedback", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -57,7 +57,7 @@ export const NavBar = () => {
 
         const jwt_token = localStorage.getItem("jwt_token")
         if (jwt_token) {
-            await fetch("https://urban-jungle-production.up.railway.app//api/user", {
+            await fetch("https://urban-jungle-production.up.railway.app/api/user", {
                 method: "GET",
                 headers: {
                     "Authorization": `Bearer ${jwt_token}`,

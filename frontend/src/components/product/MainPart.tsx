@@ -37,7 +37,7 @@ export default function MainPart({ product }: MainPartProps) {
             }
             else if (user.role !== 'admin') {
                 try {
-                    await fetch("https://urban-jungle-production.up.railway.app//api/shopping_cart/addItem", {
+                    await fetch("https://urban-jungle-production.up.railway.app/api/shopping_cart/addItem", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",

@@ -16,7 +16,7 @@ export default function ContentContainer({ category_name }: ContentContainerProp
     useEffect(() => {
         async function fetchPlants() {
             try {
-                await fetch(`https://urban-jungle-production.up.railway.app//api/categories/${category_name}`, {
+                await fetch(`https://urban-jungle-production.up.railway.app/api/categories/${category_name}`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",

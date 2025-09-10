@@ -32,7 +32,7 @@ export default function LoginModal() {
 
         if (showSignUpModal) {
             try {
-                const response = await fetch("https://urban-jungle-production.up.railway.app//api/signup", {
+                const response = await fetch("https://urban-jungle-production.up.railway.app/api/signup", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
@@ -56,7 +56,7 @@ export default function LoginModal() {
         }
         else {
             try {
-                const response = await fetch("https://urban-jungle-production.up.railway.app//api/login", {
+                const response = await fetch("https://urban-jungle-production.up.railway.app/api/login", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
@@ -147,7 +147,7 @@ export default function LoginModal() {
     const synchronizeCart = async () => {
         setIsLoading(true)
         const cartItems : CartItem[] = []
-        await fetch("https://urban-jungle-production.up.railway.app//api/shopping_cart/items", {
+        await fetch("https://urban-jungle-production.up.railway.app/api/shopping_cart/items", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -174,7 +174,7 @@ export default function LoginModal() {
         }).filter(item => item !== null)
 
         if (matchItems.length > 0) {   
-            await fetch("https://urban-jungle-production.up.railway.app//api/shopping_cart/updateCart", {
+            await fetch("https://urban-jungle-production.up.railway.app/api/shopping_cart/updateCart", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -193,7 +193,7 @@ export default function LoginModal() {
         const dbLackingItems = cart.filter(cartItem => !cartItems.some(dbItem => dbItem.plant_id === cartItem.id))
 
         if (dbLackingItems.length > 0) {
-            await fetch("https://urban-jungle-production.up.railway.app//api/shopping_cart/updateCartFromLocalStorage", {
+            await fetch("https://urban-jungle-production.up.railway.app/api/shopping_cart/updateCartFromLocalStorage", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
