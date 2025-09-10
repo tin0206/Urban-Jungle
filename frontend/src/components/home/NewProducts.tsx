@@ -15,7 +15,7 @@ export default function NewProducts() {
     const [displayCart, setDisplayCart] = useState<number | null>(null)
 
     useEffect(() => {
-        fetch("http://localhost:8000/api/plants/new-products", {
+        fetch("https://urban-jungle-production.up.railway.app/api/plants/new-products", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",

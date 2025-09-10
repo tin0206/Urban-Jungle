@@ -28,7 +28,7 @@ export default function CartItemList() {
     const fetchCartItems = async () => {
       if (user === null) {
         const plants_ids = cart.map((item: CartItem) => item.id)
-        await fetch("http://localhost:8000/api/plants/localStorage", {
+        await fetch("https://urban-jungle-production.up.railway.app//api/plants/localStorage", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -52,7 +52,7 @@ export default function CartItemList() {
         })
       }
       else if (user.role !== "admin") {
-        await fetch("http://localhost:8000/api/shopping_cart/items", {
+        await fetch("https://urban-jungle-production.up.railway.app//api/shopping_cart/items", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -87,7 +87,7 @@ export default function CartItemList() {
     }
     else {
       try {
-        await fetch(`http://localhost:8000/api/shopping_cart/removeItem`, {
+        await fetch(`https://urban-jungle-production.up.railway.app//api/shopping_cart/removeItem`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

@@ -31,7 +31,7 @@ export default function AddToCart( { displayCart, id, plantId }: AddToCartProps)
     }
     else {
       try {
-        await fetch("http://localhost:8000/api/shopping_cart/addItem", {
+        await fetch("https://urban-jungle-production.up.railway.app//api/shopping_cart/addItem", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

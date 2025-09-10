@@ -23,11 +23,6 @@ export const NavBar = () => {
     const { user, setUser } = useUserStore()
 
     useEffect(() => {
-        fetch("http://localhost:8000/sanctum/csrf-cookie", {
-            method: "GET",
-            credentials: "include",
-        })
-
         if (localStorage.getItem("jwt_token")) {
             getUser()
         }
@@ -60,10 +55,9 @@ export const NavBar = () => {
 
     const getUser = async () => {
 
-
         const jwt_token = localStorage.getItem("jwt_token")
         if (jwt_token) {
-            await fetch("http://localhost:8000/api/user", {
+            await fetch("https://urban-jungle-production.up.railway.app//api/user", {
                 method: "GET",
                 headers: {
                     "Authorization": `Bearer ${jwt_token}`,

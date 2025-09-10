@@ -7,7 +7,7 @@ import { useEffect, useState } from "react"
 export default function Categories() {
   const [categories, setCategories] = useState<Category[]>([])
   useEffect(() => {
-    fetch("http://localhost:8000/api/categories")
+    fetch("https://urban-jungle-production.up.railway.app/api/categories")
       .then((response) => response.json())
       .then((data) => {
         setCategories(data)

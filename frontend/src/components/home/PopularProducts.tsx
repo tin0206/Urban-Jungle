@@ -15,7 +15,7 @@ export default function PopularProducts() {
     const [displayCart, setDisplayCart] = useState<number | null>(null)
 
     useEffect(() => {
-        fetch("http://localhost:8000/api/plants")
+        fetch("https://urban-jungle-production.up.railway.app/api/plants")
         .then((response) => response.json())
         .then((data) => {
             setPopularPlants(data)

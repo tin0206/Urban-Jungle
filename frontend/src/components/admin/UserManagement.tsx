@@ -18,7 +18,7 @@ export default function UserManagement() {
     const { user } = useUserStore()
 
     useEffect(() => {
-        fetch("http://localhost:8000/api/getUsers")
+        fetch("https://urban-jungle-production.up.railway.app//api/getUsers")
           .then((response) => response.json())
           .then((data) => {
             setUserList(data.users)
@@ -33,7 +33,7 @@ export default function UserManagement() {
 
         setIsLoading(true)
         setIsDeleting(true)
-        await fetch(`http://localhost:8000/api/deleteUser/${id}`, {
+        await fetch(`https://urban-jungle-production.up.railway.app//api/deleteUser/${id}`, {
             method: "DELETE",
         })
         .then(response => response.json())
@@ -116,7 +116,7 @@ export default function UserManagement() {
 
         setIsLoading(true)
         setIsAdding(true)
-        await fetch("http://localhost:8000/api/signup", {
+        await fetch("https://urban-jungle-production.up.railway.app//api/signup", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

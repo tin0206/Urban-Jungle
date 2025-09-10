@@ -26,7 +26,7 @@ export default function ShoppingCart({ showMainMenu }: ShoppingCartProps) {
                 setQuantity(cart.length)
             }
             else if (user.role !== "admin") {
-                fetch("http://localhost:8000/api/shopping_cart/quantity", {
+                fetch("https://urban-jungle-production.up.railway.app//api/shopping_cart/quantity", {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",

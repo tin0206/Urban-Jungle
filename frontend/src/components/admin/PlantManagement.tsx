@@ -20,7 +20,7 @@ export default function PlantManagement() {
     const { user } = useUserStore()
 
     useEffect(() => {
-        fetch("http://localhost:8000/api/categories")
+        fetch("https://urban-jungle-production.up.railway.app//api/categories")
             .then((response) => response.json())
             .then((data) => {
                 setCategoryList(data)
@@ -33,7 +33,7 @@ export default function PlantManagement() {
     }, [])
 
     useEffect(() => {
-        fetch("http://localhost:8000/api/plants")
+        fetch("https://urban-jungle-production.up.railway.app//api/plants")
             .then((response) => response.json())
             .then((data) => {
                 setPlantList(data)
@@ -61,7 +61,7 @@ export default function PlantManagement() {
         if (!plantName || !plantDescription || !plantPrice || plantPrice <= 0) return;
         setIsModifying(true);
         setIsLoading(true);
-        await fetch('http://localhost:8000/api/plants/addPlant', {
+        await fetch('https://urban-jungle-production.up.railway.app//api/plants/addPlant', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -96,7 +96,7 @@ export default function PlantManagement() {
 
         setIsModifying(true);
         setIsLoading(true);
-        await fetch(`http://localhost:8000/api/plants/updatePlant/${id}`, {
+        await fetch(`https://urban-jungle-production.up.railway.app//api/plants/updatePlant/${id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -129,7 +129,7 @@ export default function PlantManagement() {
 
         setIsLoading(true)
         setIsDeleting(true)
-        await fetch(`http://localhost:8000/api/plants/removePlant/${id}`, {
+        await fetch(`https://urban-jungle-production.up.railway.app//api/plants/removePlant/${id}`, {
             method: 'DELETE',
         })
         .then(response => response.json())
